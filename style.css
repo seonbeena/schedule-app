@@ -1711,3 +1711,147 @@ label {
     border-color: #334155;
   }
 }
+
+
+/* dark fix: opened tools + timetable seam */
+.collapsible-content,
+.section,
+.panel {
+  background: #1f2937;
+  color: #f8fafc;
+}
+
+.section {
+  border-color: #334155;
+}
+
+.collapsible-section.open .section-toggle {
+  border-bottom-color: #334155;
+}
+
+.category-list,
+.search-results {
+  background: #1f2937;
+}
+
+.category-item,
+.search-card {
+  background: #111827;
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+.category-left span,
+.search-card strong {
+  color: #f8fafc;
+}
+
+.search-card span,
+.empty-text,
+.hint {
+  color: #cbd5e1;
+}
+
+#newCategoryName,
+#newCategoryColor,
+#searchInput {
+  background: #111827;
+  color: #f8fafc;
+  border-color: #475569;
+}
+
+#newCategoryName::placeholder,
+#searchInput::placeholder {
+  color: #64748b;
+}
+
+#addCategoryBtn {
+  background: #64748b;
+  color: #f8fafc;
+}
+
+.schedule-wrap,
+.schedule-header,
+.schedule-subheader,
+.schedule-scroll {
+  background: #1f2937;
+}
+
+.schedule-header,
+.schedule-subheader {
+  border-color: #334155;
+}
+
+.schedule-scroll {
+  border-top: 0 !important;
+}
+
+.day-grid,
+.week-grid,
+.month-grid {
+  background: #1f2937;
+}
+
+.day-grid::before,
+.week-grid::before,
+.month-grid::before {
+  background: #1f2937;
+}
+
+.time-cell,
+.slot {
+  border-color: #334155;
+}
+
+.slot {
+  background: #1f2937;
+}
+
+.time-cell {
+  background: #172033;
+}
+
+/* iOS/Safari sometimes paints form controls white unless explicitly forced */
+input,
+select,
+button {
+  color-scheme: dark;
+}
+
+input[type="color"] {
+  background: #111827;
+  border-color: #475569;
+}
+
+/* remove thin light gaps around sticky timetable headers */
+.week-head,
+.corner-cell,
+.month-day-name {
+  background: #172033;
+  border-color: #334155;
+}
+
+@media (max-width: 900px) {
+  .collapsible-content,
+  .section,
+  .panel,
+  .schedule-wrap,
+  .schedule-header,
+  .schedule-subheader,
+  .schedule-scroll {
+    background: #1f2937;
+  }
+
+  .schedule-scroll {
+    border-top: 0 !important;
+  }
+
+  .category-item,
+  .search-card,
+  #newCategoryName,
+  #searchInput {
+    background: #111827;
+    border-color: #334155;
+    color: #f8fafc;
+  }
+}
