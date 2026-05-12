@@ -1494,3 +1494,110 @@ select {
 .time-cell {
   border-bottom-color: #334155;
 }
+
+
+/* mobile clean v10: single overlay event blocks on timetable */
+.timeline-grid {
+  display: grid !important;
+  grid-template-columns: 42px minmax(0, 1fr) !important;
+  align-items: stretch;
+}
+
+.time-column,
+.timeline-column {
+  position: relative;
+}
+
+.timeline-column {
+  background: #1f2937;
+  overflow: hidden;
+}
+
+.time-column .time-cell,
+.timeline-column .slot {
+  min-height: 38px;
+  height: 38px;
+  border-bottom: 1px solid #334155;
+}
+
+.time-column .time-cell {
+  padding: 6px 3px 6px 2px;
+  text-align: right;
+  color: #94a3b8;
+  font-size: 11px;
+  background: #172033;
+  border-right: 1px solid #334155;
+}
+
+.timeline-column .slot {
+  background: #1f2937;
+}
+
+/* neutralize old per-slot event coloring from v8/v9 */
+.slot.event-slot,
+.slot.event-start,
+.slot.event-continuation,
+.slot.event-end {
+  background: #1f2937 !important;
+  border-bottom-color: #334155 !important;
+  overflow: visible;
+  margin-bottom: 0 !important;
+}
+
+.slot.event-slot::before,
+.slot.event-continuation::before {
+  display: none !important;
+  content: none !important;
+}
+
+.timeline-event-block {
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  z-index: 2;
+  border-radius: 8px;
+  overflow: hidden;
+  color: #1f2937;
+  box-shadow: 0 0 0 1px rgba(17, 24, 39, 0.08);
+  cursor: pointer;
+}
+
+.timeline-event-block .event-start-content {
+  position: static !important;
+  margin: 0;
+  padding: 6px 7px 4px;
+  background: transparent !important;
+  color: #1f2937;
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.timeline-event-block .event-title {
+  font-size: 11px;
+  line-height: 1.15;
+  font-weight: 900;
+}
+
+.timeline-event-block .event-time {
+  margin-top: 2px;
+  font-size: 10px;
+  line-height: 1.15;
+  font-weight: 800;
+  opacity: 0.82;
+}
+
+.timeline-event-block .event-memo {
+  margin-top: 2px;
+  font-size: 10px;
+  line-height: 1.15;
+  opacity: 0.78;
+}
+
+.timeline-event-block .event-title,
+.timeline-event-block .event-time,
+.timeline-event-block .event-memo {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

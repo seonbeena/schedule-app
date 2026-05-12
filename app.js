@@ -317,40 +317,44 @@ function renderEventBlock(event) {
 
 function renderDayView() {
   const events = getVisibleEventsForDate(selectedDate).filter(event => !event.isUnscheduled);
-  els.schedule.className = "schedule-scroll day-grid";
+  els.schedule.className = "schedule-scroll day-grid timeline-grid";
   els.schedule.innerHTML = "";
+
+  const timeColumn = document.createElement("div");
+  timeColumn.className = "time-column";
+
+  const timelineColumn = document.createElement("div");
+  timelineColumn.className = "timeline-column";
 
   for (let minutes = startHour * 60; minutes < endHour * 60; minutes += slotMinutes) {
     const timeCell = document.createElement("div");
     timeCell.className = "time-cell";
     timeCell.textContent = minutesToTime(minutes);
+    timeColumn.appendChild(timeCell);
 
     const slot = document.createElement("div");
     slot.className = "slot";
     slot.dataset.time = String(minutes);
-
-    const occupyingEvent = events.find(item => item.start <= minutes && item.end > minutes);
-
-    if (occupyingEvent) {
-      const category = getCategory(occupyingEvent.categoryId);
-      slot.dataset.eventId = occupyingEvent.id;
-      slot.classList.add("event-slot");
-      slot.style.setProperty("--event-color", category.color);
-
-      if (minutes === occupyingEvent.start) {
-        slot.classList.add("event-start");
-        slot.innerHTML = renderEventBlock(occupyingEvent);
-      } else {
-        slot.classList.add("event-continuation");
-      }
-
-      if (minutes + slotMinutes >= occupyingEvent.end) {
-        slot.classList.add("event-end");
-      }
-    }
-
-    els.schedule.append(timeCell, slot);
+    timelineColumn.appendChild(slot);
   }
+
+  events.forEach(event => {
+    const category = getCategory(event.categoryId);
+    const startOffset = ((event.start - startHour * 60) / slotMinutes) * 38;
+    const duration = ((event.end - event.start) / slotMinutes) * 38;
+    const block = document.createElement("div");
+
+    block.className = "timeline-event-block";
+    block.dataset.eventId = event.id;
+    block.style.top = `${startOffset + 3}px`;
+    block.style.height = `${Math.max(30, duration - 6)}px`;
+    block.style.background = category.color;
+    block.innerHTML = renderEventBlock(event);
+
+    timelineColumn.appendChild(block);
+  });
+
+  els.schedule.append(timeColumn, timelineColumn);
 }
 
 function renderWeekView() {
