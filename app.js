@@ -37,6 +37,7 @@ const els = {
   closeEventModalBtn: document.getElementById("closeEventModalBtn"),
   eventModalTitle: document.getElementById("eventModalTitle"),
   eventDate: document.getElementById("eventDate"),
+  eventDateLabel: document.getElementById("eventDateLabel"),
   title: document.getElementById("title"),
   categorySelect: document.getElementById("categorySelect"),
   memo: document.getElementById("memo"),
@@ -241,6 +242,13 @@ function updateDateLabel() {
 
 function updateTodayButton() {
   els.todayBtn.classList.toggle("is-hidden", selectedDate === getTodayString());
+}
+
+
+function updateEventDateLabel() {
+  if (!els.eventDateLabel || !els.eventDate) return;
+  const value = els.eventDate.value || selectedDate;
+  els.eventDateLabel.textContent = getKoreanDateLabel(value);
 }
 
 function renderCategories() {
@@ -481,6 +489,7 @@ function closeEventModal() {
 function resetForm() {
   editingEventId = null;
   els.eventDate.value = selectedDate;
+  updateEventDateLabel();
   els.title.value = "";
   els.memo.value = "";
   els.categorySelect.value = appData.categories[0]?.id || "";
@@ -501,6 +510,7 @@ function startEditEvent(id) {
   selectedDate = event.date;
   els.datePicker.value = selectedDate;
   els.eventDate.value = event.date;
+  updateEventDateLabel();
   els.title.value = event.title;
   els.categorySelect.value = event.categoryId;
   els.memo.value = event.memo || "";
@@ -689,6 +699,8 @@ els.datePicker.addEventListener("change", event => {
   renderSchedule();
 });
 
+els.eventDate.addEventListener("change", updateEventDateLabel);
+
 els.dayViewBtn.addEventListener("click", () => {
   viewMode = "day";
   renderSchedule();
@@ -732,5 +744,6 @@ document.addEventListener("keydown", event => {
 createTimeOptions();
 els.datePicker.value = selectedDate;
 els.eventDate.value = selectedDate;
+updateEventDateLabel();
 renderAll();
 registerServiceWorker();
