@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#475569" />
+  <meta name="description" content="날짜별·주간·월간 일정, 반복 일정, 카테고리 색상, 검색을 관리할 수 있는 일정표입니다." />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="stylesheet" href="style.css" />
+  <title>일정표</title>
+</head>
+<body>
+  <header>
+    <h1>일정표</h1>
+    <p>오늘과 이번 주의 일정을 빠르게 확인하세요.</p>
+  </header>
+
+  <main class="container">
+    <section class="panel">
+      <div class="section collapsible-section open" data-section="event-form">
+        <button class="section-toggle" type="button" data-toggle="event-form">
+          <span>일정 추가 / 수정</span>
+          <span class="toggle-icon">−</span>
+        </button>
+
+        <div class="collapsible-content">
+          <h2>일정 추가</h2>
+
+          <label for="title">일정 이름</label>
+          <input id="title" type="text" />
+
+          <label for="categorySelect">일정 종류</label>
+          <select id="categorySelect"></select>
+
+          <label for="memo">메모</label>
+          <input id="memo" type="text" />
+
+          <label for="start">시작 시간</label>
+          <select id="start"></select>
+
+          <label for="end">종료 시간</label>
+          <select id="end"></select>
+
+          <label for="repeat">반복</label>
+          <select id="repeat">
+            <option value="none">반복 없음</option>
+            <option value="daily">매일</option>
+            <option value="weekly">매주 같은 요일</option>
+            <option value="weekdays">평일</option>
+          </select>
+
+          <div id="eventButtonRow" class="button-row">
+            <button id="saveEventBtn">추가하기</button>
+            <button id="cancelEditBtn" class="secondary-btn" type="button" style="display: none;">수정 취소</button>
+          </div>
+
+          <button id="deleteEditingBtn" class="soft-danger-btn" type="button" style="display: none;">이 일정 삭제</button>
+          <button id="clearDayBtn" class="soft-danger-btn" type="button">이 날짜 비우기</button>
+
+          <p class="hint">
+            반복 일정은 화면에 자동 표시됩니다. 반복 일정 수정·삭제는 현재 단순화를 위해 전체 반복 일정에 적용됩니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="section collapsible-section" data-section="category-form">
+        <button class="section-toggle" type="button" data-toggle="category-form">
+          <span>일정 종류 관리</span>
+          <span class="toggle-icon">+</span>
+        </button>
+
+        <div class="collapsible-content">
+          <h2>일정 종류 관리</h2>
+
+          <label for="newCategoryName">새 종류 이름</label>
+          <div class="inline-grid">
+            <input id="newCategoryName" type="text" />
+            <input id="newCategoryColor" type="color" value="#bfdbfe" title="색상 선택" />
+          </div>
+
+          <button id="addCategoryBtn" type="button">종류 추가</button>
+          <div id="categoryList" class="category-list"></div>
+        </div>
+      </div>
+
+      <div class="section collapsible-section" data-section="search-form">
+        <button class="section-toggle" type="button" data-toggle="search-form">
+          <span>일정 검색</span>
+          <span class="toggle-icon">+</span>
+        </button>
+
+        <div class="collapsible-content">
+          <h2>일정 검색</h2>
+          <input id="searchInput" type="text" />
+          <div id="searchResults" class="search-results">
+            <p class="empty-text">검색어를 입력하면 저장된 전체 일정에서 찾아줍니다.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="schedule-wrap">
+      <div class="schedule-header">
+        <h2 id="dateTitle">오늘의 일정</h2>
+        <div class="date-controls">
+          <button id="prevDateBtn" class="secondary-btn" type="button">이전</button>
+          <input id="datePicker" type="date" />
+          <button id="todayBtn" class="secondary-btn" type="button">오늘</button>
+          <button id="nextDateBtn" class="secondary-btn" type="button">다음</button>
+        </div>
+      </div>
+
+      <div class="schedule-subheader">
+        <div>
+          <span id="selectedDateText"></span>
+        </div>
+
+        <div class="view-controls segmented-control">
+          <button id="dayViewBtn" class="active" type="button">하루</button>
+          <button id="weekViewBtn" type="button">주간</button>
+          <button id="monthViewBtn" type="button">월간</button>
+        </div>
+
+        <div class="filter-area">
+          <label for="typeFilter">보기 필터</label>
+          <select id="typeFilter"></select>
+          <span id="eventCount">0개 일정</span>
+        </div>
+      </div>
+
+      <div id="scheduleScroll" class="schedule-scroll">
+        <div id="schedule" class="day-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <button id="floatingAddBtn" class="floating-add-btn" type="button">+ 일정 추가</button>
+
+  <script src="app.js"></script>
+</body>
+</html>
