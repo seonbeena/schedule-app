@@ -1855,3 +1855,76 @@ input[type="color"] {
     color: #f8fafc;
   }
 }
+
+
+/* final spacing fix */
+@media (max-width: 900px) {
+  body {
+    padding-bottom: 18px !important;
+  }
+
+  .schedule-header {
+    padding: 12px 11px 8px 13px !important;
+  }
+
+  .schedule-header h2 {
+    margin: 0 0 4px 4px !important;
+    line-height: 1.2;
+  }
+
+  .date-controls {
+    gap: 6px;
+  }
+
+  .date-picker-shell {
+    min-height: 31px;
+  }
+
+  .schedule-scroll {
+    max-height: calc(100dvh - 335px);
+    min-height: 420px;
+  }
+
+  .floating-add-btn {
+    bottom: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding-bottom: 14px !important;
+  }
+
+  .schedule-header {
+    padding-top: 11px !important;
+    padding-bottom: 8px !important;
+  }
+
+  .schedule-header h2 {
+    margin-bottom: 4px !important;
+  }
+
+  .schedule-scroll {
+    max-height: calc(100dvh - 325px);
+    min-height: 410px;
+  }
+}
+
+
+/* reduce accidental double-tap zoom on mobile */
+html,
+body,
+button,
+input,
+select,
+.event,
+.month-cell,
+.date-picker-shell,
+.segmented-control,
+.filter-area,
+.floating-add-btn,
+.section-toggle,
+.search-card,
+.category-item {
+  touch-action: manipulation;
+}
