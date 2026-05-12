@@ -1,7 +1,13 @@
 const startHour = 6;
 const endHour = 26;
 const slotMinutes = 30;
-const storageKey = "dayplan-mobile-refactor-v1";
+const storageKey = "dayplan-mobile-clean-v2";
+const legacyKeys = [
+  "dayplan-mobile-refactor-v1",
+  "date-schedule-app-v5",
+  "date-schedule-app-v4",
+  "date-schedule-app-v3"
+];
 
 const els = {
   sectionToggles: document.querySelectorAll("[data-toggle]"),
@@ -122,16 +128,28 @@ function getMonthDates(dateString) {
   });
 }
 
+function normalizeData(raw) {
+  return {
+    categories: Array.isArray(raw?.categories) ? raw.categories : [],
+    events: Array.isArray(raw?.events) ? raw.events : []
+  };
+}
+
 function loadAppData() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(storageKey));
-    return {
-      categories: Array.isArray(saved?.categories) ? saved.categories : [],
-      events: Array.isArray(saved?.events) ? saved.events : []
-    };
-  } catch {
-    return { categories: [], events: [] };
+  const keys = [storageKey, ...legacyKeys];
+
+  for (const key of keys) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) continue;
+      const data = normalizeData(JSON.parse(raw));
+      if (data.categories.length || data.events.length || key === storageKey) {
+        return data;
+      }
+    } catch {}
   }
+
+  return { categories: [], events: [] };
 }
 
 function saveAppData() {
@@ -277,7 +295,7 @@ function renderEventBlock(event) {
 
 function renderDayView() {
   const events = getVisibleEventsForDate(selectedDate);
-  els.schedule.className = "schedule-body day-grid";
+  els.schedule.className = "schedule-scroll day-grid";
   els.schedule.innerHTML = "";
 
   for (let minutes = startHour * 60; minutes < endHour * 60; minutes += slotMinutes) {
@@ -298,7 +316,7 @@ function renderDayView() {
 
 function renderWeekView() {
   const week = getWeekDates(selectedDate);
-  els.schedule.className = "schedule-body week-list";
+  els.schedule.className = "schedule-scroll week-list";
   els.schedule.innerHTML = week.map(date => {
     const events = getVisibleEventsForDate(date);
     const list = events.length
@@ -329,7 +347,7 @@ function renderMonthView() {
   const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
   const dates = getMonthDates(selectedDate);
 
-  els.schedule.className = "schedule-body month-grid";
+  els.schedule.className = "schedule-scroll month-grid";
   els.schedule.innerHTML = dayNames.map(day => `<div class="month-day-name">${day}</div>`).join("");
 
   els.schedule.innerHTML += dates.map(date => {

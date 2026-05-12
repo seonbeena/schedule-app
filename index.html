@@ -5,20 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#111827" />
   <meta name="description" content="오늘의 시간부터 한 달의 흐름까지 가볍게 정리하는 일정표입니다." />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="icon-192.png" />
-  <link rel="stylesheet" href="style.css" />
-  <title>데이플랜 Mobile v1</title>
+  <link rel="manifest" href="manifest.json?v=mobile-clean-v2" />
+  <link rel="apple-touch-icon" href="icon-192.png?v=mobile-clean-v2" />
+  <link rel="stylesheet" href="style.css?v=mobile-clean-v2" />
+  <title>데이플랜 Mobile Clean v2</title>
 </head>
 <body>
-  <div class="app-shell">
-    <header class="app-header">
-      <h1>데이플랜 Mobile v1</h1>
-      <p>오늘의 시간부터 한 달의 흐름까지 가볍게 정리하세요. · Mobile v1</p>
+  <div class="phone">
+    <header>
+      <h1>데이플랜 Mobile Clean v2</h1>
+      <p>오늘의 시간부터 한 달의 흐름까지 가볍게 정리하세요. · Mobile Clean v2</p>
     </header>
 
-    <main class="app-main">
-      <section class="tool-panel">
+    <main class="container">
+      <section class="panel">
         <section class="tool-section" data-section="category">
           <button class="section-toggle" type="button" data-toggle="category">
             <span>일정 종류 관리</span>
@@ -31,7 +31,9 @@
               <input id="newCategoryColor" type="color" value="#93c5fd" aria-label="색상 선택" />
             </div>
             <button id="addCategoryBtn" class="primary-btn" type="button">종류 추가</button>
-            <div id="categoryList" class="list-area"></div>
+            <div id="categoryList" class="list-area">
+              <p class="empty-text">아직 추가된 일정 종류가 없습니다.</p>
+            </div>
           </div>
         </section>
 
@@ -50,24 +52,25 @@
         </section>
       </section>
 
-      <section class="schedule-card">
+      <section class="schedule-wrap">
         <div class="schedule-header">
           <div class="schedule-title-row">
             <h2 id="dateTitle">일간 일정</h2>
             <button id="todayBtn" class="today-mini is-hidden" type="button">오늘 날짜</button>
           </div>
-
-          <div class="date-nav">
-            <button id="prevDateBtn" class="date-arrow" type="button" aria-label="이전">‹</button>
-            <div class="date-display">
-              <span id="datePickerLabel"></span>
-              <input id="datePicker" type="date" aria-label="날짜 선택" />
+          <div class="date-nav-wrap">
+            <div class="date-nav">
+              <button id="prevDateBtn" class="date-arrow" type="button" aria-label="이전">‹</button>
+              <div class="date-display">
+                <span id="datePickerLabel"></span>
+                <input id="datePicker" type="date" aria-label="날짜 선택" />
+              </div>
+              <button id="nextDateBtn" class="date-arrow" type="button" aria-label="다음">›</button>
             </div>
-            <button id="nextDateBtn" class="date-arrow" type="button" aria-label="다음">›</button>
           </div>
         </div>
 
-        <div class="schedule-controls">
+        <div class="schedule-subheader">
           <div class="segmented-control">
             <button id="dayViewBtn" class="active" type="button">일간</button>
             <button id="weekViewBtn" type="button">주간</button>
@@ -81,7 +84,7 @@
           </div>
         </div>
 
-        <div id="schedule" class="schedule-body day-grid"></div>
+        <div id="schedule" class="schedule-scroll day-grid"></div>
       </section>
     </main>
 
@@ -90,7 +93,6 @@
 
   <div id="eventModal" class="modal" aria-hidden="true">
     <div id="modalBackdrop" class="modal-backdrop"></div>
-
     <section class="event-sheet" role="dialog" aria-modal="true" aria-labelledby="eventModalTitle">
       <div class="sheet-handle" aria-hidden="true"></div>
 
@@ -136,11 +138,10 @@
       </div>
 
       <button id="deleteEditingBtn" class="danger-soft-btn" type="button">이 일정 삭제</button>
-
       <p class="hint">반복 일정은 화면에 자동 표시됩니다. 반복 일정 수정·삭제는 전체 반복 일정에 적용됩니다.</p>
     </section>
   </div>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=mobile-clean-v2"></script>
 </body>
 </html>

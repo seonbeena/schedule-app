@@ -1,16 +1,14 @@
-const CACHE_NAME = "dayplan-mobile-refactor-v1-named";
+const CACHE_NAME = "dayplan-mobile-clean-v2";
 const ASSETS = [
-  "./",
-  "./index.html",
-  "./style.css",
-  "./app.js",
-  "./manifest.json",
-  "./icon-192.png",
-  "./icon-512.png"
+  "./index.html?v=mobile-clean-v2",
+  "./style.css?v=mobile-clean-v2",
+  "./app.js?v=mobile-clean-v2",
+  "./manifest.json?v=mobile-clean-v2",
+  "./icon-192.png?v=mobile-clean-v2",
+  "./icon-512.png?v=mobile-clean-v2"
 ];
 
 self.addEventListener("install", event => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)));
   self.skipWaiting();
 });
 
@@ -25,5 +23,14 @@ self.addEventListener("activate", event => {
 
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
-  event.respondWith(caches.match(event.request).then(cached => cached || fetch(event.request)));
+
+  event.respondWith(
+    fetch(event.request)
+      .then(response => {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+        return response;
+      })
+      .catch(() => caches.match(event.request))
+  );
 });
