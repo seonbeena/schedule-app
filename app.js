@@ -8,6 +8,7 @@ const defaultCategories = [];
 
 const els = {
   title: document.getElementById("title"),
+  eventDate: document.getElementById("eventDate"),
   categorySelect: document.getElementById("categorySelect"),
   memo: document.getElementById("memo"),
   start: document.getElementById("start"),
@@ -112,6 +113,11 @@ function updateDatePickerLabel() {
   const date = parseDate(selectedDate);
   const days = ["일", "월", "화", "수", "목", "금", "토"];
   els.datePickerLabel.textContent = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 (${days[date.getDay()]})`;
+}
+
+function updateTodayButton() {
+  if (!els.todayBtn) return;
+  els.todayBtn.classList.toggle("show", selectedDate !== getTodayString());
 }
 
 function getWeekDates(dateString) {
@@ -455,6 +461,7 @@ function renderMonthView() {
 
 function renderSchedule() {
   updateDatePickerLabel();
+  updateTodayButton();
 
   if (viewMode === "day") renderDayView();
   else if (viewMode === "week") renderWeekView();
@@ -502,6 +509,7 @@ function closeEventModal() {
 
 function saveEvent() {
   const title = els.title.value.trim();
+  const eventDateValue = els.eventDate?.value || selectedDate;
   const categoryId = els.categorySelect.value;
   const memo = els.memo.value.trim();
   const start = Number(els.start.value);
@@ -544,7 +552,7 @@ function saveEvent() {
   } else {
     appData.events.push({
       id: createId("event"),
-      date: selectedDate,
+      date: eventDateValue,
       title,
       categoryId,
       memo,
@@ -554,6 +562,8 @@ function saveEvent() {
     });
   }
 
+  selectedDate = eventDateValue;
+  els.datePicker.value = selectedDate;
   saveAppData();
   resetForm();
   closeEventModal();
@@ -598,6 +608,7 @@ function startEditEvent(id) {
   editingEventId = id;
   selectedDate = event.date;
   els.datePicker.value = selectedDate;
+  if (els.eventDate) els.eventDate.value = selectedDate;
   els.title.value = event.title;
   els.categorySelect.value = event.categoryId;
   els.memo.value = event.memo || "";
@@ -614,6 +625,7 @@ function startEditEvent(id) {
 
 function resetForm() {
   editingEventId = null;
+  if (els.eventDate) els.eventDate.value = selectedDate;
   els.title.value = "";
   els.memo.value = "";
   if (appData.categories.length > 0) {
@@ -749,6 +761,7 @@ els.sectionToggles.forEach(button => {
 
 els.floatingAddBtn.addEventListener("click", () => {
   resetForm();
+  if (els.eventDate) els.eventDate.value = selectedDate;
   openEventModal("add");
 });
 
@@ -857,7 +870,9 @@ els.typeFilter.addEventListener("change", renderSchedule);
 
 createTimeOptions();
 els.datePicker.value = selectedDate;
+if (els.eventDate) els.eventDate.value = selectedDate;
 updateDatePickerLabel();
+updateTodayButton();
 renderAll();
 closeAllSectionsOnMobile();
 registerServiceWorker();
