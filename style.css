@@ -1981,3 +1981,42 @@ select {
     font-size: 16px !important;
   }
 }
+
+
+/* Korean IME composition height stability */
+.event-sheet input,
+.event-sheet select,
+#newCategoryName,
+#searchInput {
+  height: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  line-height: 20px !important;
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+  vertical-align: middle;
+}
+
+.event-sheet label,
+.sheet-header,
+.time-form-grid {
+  flex-shrink: 0;
+}
+
+.event-sheet {
+  contain: layout;
+}
+
+@media (max-width: 900px) {
+  .event-sheet input,
+  .event-sheet select,
+  #newCategoryName,
+  #searchInput {
+    height: 34px !important;
+    min-height: 34px !important;
+    max-height: 34px !important;
+    line-height: 20px !important;
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+  }
+}
