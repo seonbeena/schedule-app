@@ -28,6 +28,7 @@ const els = {
   floatingAddBtn: document.getElementById("floatingAddBtn"),
   dateTitle: document.getElementById("dateTitle"),
   datePicker: document.getElementById("datePicker"),
+  datePickerLabel: document.getElementById("datePickerLabel"),
   prevDateBtn: document.getElementById("prevDateBtn"),
   nextDateBtn: document.getElementById("nextDateBtn"),
   todayBtn: document.getElementById("todayBtn"),
@@ -92,6 +93,12 @@ function getKoreanDateLabel(dateString, short = false) {
   const days = ["일", "월", "화", "수", "목", "금", "토"];
   if (short) return `${date.getMonth() + 1}/${date.getDate()} (${days[date.getDay()]})`;
   return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 (${days[date.getDay()]})`;
+}
+
+function updateDatePickerLabel() {
+  if (!els.datePickerLabel) return;
+  const date = parseDate(selectedDate);
+  els.datePickerLabel.textContent = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
 }
 
 function getWeekDates(dateString) {
@@ -434,6 +441,8 @@ function renderMonthView() {
 }
 
 function renderSchedule() {
+  updateDatePickerLabel();
+
   if (viewMode === "day") renderDayView();
   else if (viewMode === "week") renderWeekView();
   else renderMonthView();
@@ -837,6 +846,7 @@ els.typeFilter.addEventListener("change", renderSchedule);
 
 createTimeOptions();
 els.datePicker.value = selectedDate;
+updateDatePickerLabel();
 renderAll();
 closeAllSectionsOnMobile();
 registerServiceWorker();

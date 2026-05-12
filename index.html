@@ -59,7 +59,10 @@
         <h2 id="dateTitle">오늘의 일정</h2>
         <div class="date-controls">
           <button id="prevDateBtn" class="secondary-btn" type="button">이전</button>
-          <input id="datePicker" type="date" />
+          <div class="date-picker-shell">
+            <span id="datePickerLabel">날짜 선택</span>
+            <input id="datePicker" type="date" aria-label="날짜 선택" />
+          </div>
           <button id="todayBtn" class="secondary-btn" type="button">오늘</button>
           <button id="nextDateBtn" class="secondary-btn" type="button">다음</button>
         </div>

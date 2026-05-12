@@ -295,9 +295,35 @@ button:hover {
   justify-content: flex-end;
 }
 
-.date-controls input {
+.date-picker-shell {
+  position: relative;
   width: 160px;
   min-width: 0;
+  padding: 9px 12px;
+  border: 1px solid #dbe2ea;
+  border-radius: 9px;
+  background: #f8fafc;
+  color: #334155;
+  font-weight: 700;
+  text-align: center;
+  overflow: hidden;
+}
+
+.date-picker-shell input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+#datePickerLabel {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .date-controls button,
@@ -891,13 +917,19 @@ button:hover {
     justify-content: stretch;
     min-width: 0;
     max-width: 100%;
+    overflow: hidden;
   }
 
-  .date-controls input {
+  .date-picker-shell {
     width: 100%;
     min-width: 0;
     grid-column: 1 / -1;
     order: -1;
+    padding: 7px 10px;
+    min-height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .date-controls button,
@@ -1156,10 +1188,10 @@ button:hover {
   }
 
   .date-controls {
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
   }
 
-  .date-controls input {
+  .date-picker-shell {
     grid-column: 1 / -1;
   }
 
