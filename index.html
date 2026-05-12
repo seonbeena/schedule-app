@@ -5,53 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#111827" />
   <meta name="description" content="오늘의 시간부터 한 달의 흐름까지 가볍게 정리하는 일정표입니다." />
-  <link rel="manifest" href="manifest.json?v=mobile-clean-v4" />
-  <link rel="apple-touch-icon" href="icon-192.png?v=mobile-clean-v4" />
-  <link rel="stylesheet" href="style.css?v=mobile-clean-v4" />
-  <title>데이플랜 Mobile Clean v4</title>
+  <link rel="manifest" href="manifest.json?v=mobile-clean-v5" />
+  <link rel="apple-touch-icon" href="icon-192.png?v=mobile-clean-v5" />
+  <link rel="stylesheet" href="style.css?v=mobile-clean-v5" />
+  <title>데이플랜 Mobile Clean v5</title>
 </head>
 <body>
   <div class="phone">
     <header>
-      <h1>데이플랜 Mobile Clean v4</h1>
-      <p>오늘의 시간부터 한 달의 흐름까지 가볍게 정리하세요. · Mobile Clean v4</p>
+      <div class="app-title-row">
+        <div>
+          <h1>데이플랜 Mobile Clean v5</h1>
+          <p>오늘의 시간부터 한 달의 흐름까지 가볍게 정리하세요. · Mobile Clean v5</p>
+        </div>
+        <button id="settingsBtn" class="settings-btn" type="button" aria-label="설정">⚙</button>
+      </div>
     </header>
 
     <main class="container">
-      <section class="panel">
-        <section class="tool-section" data-section="category">
-          <button class="section-toggle" type="button" data-toggle="category">
-            <span>일정 종류 관리</span>
-            <span class="toggle-icon">+</span>
-          </button>
-          <div class="section-content">
-            <label for="newCategoryName">새 종류 이름</label>
-            <div class="category-input-row">
-              <input id="newCategoryName" type="text" autocomplete="off" />
-              <input id="newCategoryColor" type="color" value="#93c5fd" aria-label="색상 선택" />
-            </div>
-            <button id="addCategoryBtn" class="primary-btn" type="button">종류 추가</button>
-            <div id="categoryList" class="list-area">
-              <p class="empty-text">아직 추가된 일정 종류가 없습니다.</p>
-            </div>
-          </div>
-        </section>
-
-        <section class="tool-section" data-section="search">
-          <button class="section-toggle" type="button" data-toggle="search">
-            <span>일정 검색</span>
-            <span class="toggle-icon">+</span>
-          </button>
-          <div class="section-content">
-            <label for="searchInput">검색어</label>
-            <input id="searchInput" type="text" autocomplete="off" />
-            <div id="searchResults" class="list-area">
-              <p class="empty-text">검색어를 입력하면 저장된 전체 일정에서 찾아줍니다.</p>
-            </div>
-          </div>
-        </section>
-      </section>
-
       <section class="schedule-wrap">
         <div class="schedule-header">
           <div class="schedule-title-row">
@@ -84,11 +55,64 @@
           </div>
         </div>
 
+        <section id="summaryCard" class="summary-card">
+          <button id="summaryToggle" class="summary-toggle" type="button">
+            <span class="summary-title">오늘 요약</span>
+            <span id="summaryCount" class="summary-count">0개</span>
+            <span id="summaryPreview" class="summary-preview">일정 없음</span>
+          </button>
+          <div id="summaryDetail" class="summary-detail"></div>
+        </section>
+
         <div id="schedule" class="schedule-scroll day-grid"></div>
       </section>
     </main>
 
     <button id="floatingAddBtn" class="floating-add-btn" type="button">+ 일정 추가</button>
+  </div>
+
+  <div id="settingsModal" class="modal" aria-hidden="true">
+    <div id="settingsBackdrop" class="modal-backdrop"></div>
+    <section class="event-sheet settings-sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="sheet-header">
+        <h2 id="settingsTitle">설정</h2>
+        <button id="settingsCloseBtn" class="icon-btn" type="button" aria-label="닫기">×</button>
+      </div>
+
+      <div class="settings-list">
+        <section class="settings-section" data-section="category">
+          <button class="section-toggle" type="button" data-toggle="category">
+            <span>일정 종류 관리</span>
+            <span class="toggle-icon">+</span>
+          </button>
+          <div class="section-content">
+            <label for="newCategoryName">새 종류 이름</label>
+            <div class="category-input-row">
+              <input id="newCategoryName" type="text" autocomplete="off" />
+              <input id="newCategoryColor" type="color" value="#93c5fd" aria-label="색상 선택" />
+            </div>
+            <button id="addCategoryBtn" class="primary-btn" type="button">종류 추가</button>
+            <div id="categoryList" class="list-area">
+              <p class="empty-text">아직 추가된 일정 종류가 없습니다.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="settings-section" data-section="search">
+          <button class="section-toggle" type="button" data-toggle="search">
+            <span>일정 검색</span>
+            <span class="toggle-icon">+</span>
+          </button>
+          <div class="section-content">
+            <label for="searchInput">검색어</label>
+            <input id="searchInput" type="text" autocomplete="off" />
+            <div id="searchResults" class="list-area">
+              <p class="empty-text">검색어를 입력하면 저장된 전체 일정에서 찾아줍니다.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
   </div>
 
   <div id="eventModal" class="modal" aria-hidden="true">
@@ -116,7 +140,12 @@
       <label for="memo">메모</label>
       <input id="memo" type="text" autocomplete="off" />
 
-      <div class="time-form-grid">
+      <label class="unscheduled-row" for="isUnscheduled">
+        <input id="isUnscheduled" type="checkbox" />
+        <span>시간 미정</span>
+      </label>
+
+      <div id="timeFields" class="time-form-grid">
         <div>
           <label for="start">시작 시간</label>
           <select id="start"></select>
@@ -145,6 +174,6 @@
     </section>
   </div>
 
-  <script src="app.js?v=mobile-clean-v4"></script>
+  <script src="app.js?v=mobile-clean-v5"></script>
 </body>
 </html>

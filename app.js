@@ -1,7 +1,7 @@
 const startHour = 6;
 const endHour = 26;
 const slotMinutes = 30;
-const storageKey = "dayplan-mobile-clean-v2";
+const storageKey = "dayplan-mobile-clean-v5";
 const legacyKeys = [
   "dayplan-mobile-refactor-v1",
   "date-schedule-app-v5",
@@ -11,6 +11,10 @@ const legacyKeys = [
 
 const els = {
   sectionToggles: document.querySelectorAll("[data-toggle]"),
+  settingsBtn: document.getElementById("settingsBtn"),
+  settingsModal: document.getElementById("settingsModal"),
+  settingsBackdrop: document.getElementById("settingsBackdrop"),
+  settingsCloseBtn: document.getElementById("settingsCloseBtn"),
   newCategoryName: document.getElementById("newCategoryName"),
   newCategoryColor: document.getElementById("newCategoryColor"),
   addCategoryBtn: document.getElementById("addCategoryBtn"),
@@ -30,6 +34,11 @@ const els = {
   typeFilter: document.getElementById("typeFilter"),
   eventCount: document.getElementById("eventCount"),
   schedule: document.getElementById("schedule"),
+  summaryCard: document.getElementById("summaryCard"),
+  summaryToggle: document.getElementById("summaryToggle"),
+  summaryCount: document.getElementById("summaryCount"),
+  summaryPreview: document.getElementById("summaryPreview"),
+  summaryDetail: document.getElementById("summaryDetail"),
 
   floatingAddBtn: document.getElementById("floatingAddBtn"),
   eventModal: document.getElementById("eventModal"),
@@ -41,6 +50,8 @@ const els = {
   title: document.getElementById("title"),
   categorySelect: document.getElementById("categorySelect"),
   memo: document.getElementById("memo"),
+  isUnscheduled: document.getElementById("isUnscheduled"),
+  timeFields: document.getElementById("timeFields"),
   start: document.getElementById("start"),
   end: document.getElementById("end"),
   repeat: document.getElementById("repeat"),
@@ -136,6 +147,13 @@ function normalizeData(raw) {
   };
 }
 
+function normalizeData(raw) {
+  return {
+    categories: Array.isArray(raw?.categories) ? raw.categories : [],
+    events: Array.isArray(raw?.events) ? raw.events : []
+  };
+}
+
 function loadAppData() {
   const keys = [storageKey, ...legacyKeys];
 
@@ -219,7 +237,7 @@ function getVisibleEventsForDate(dateString) {
 
 function hasOverlap(dateString, start, end, ignoreId = null) {
   return getEventsForDate(dateString).some(event => {
-    if (event.id === ignoreId) return false;
+    if (event.id === ignoreId || event.isUnscheduled) return false;
     return start < event.end && end > event.start;
   });
 }
@@ -302,7 +320,7 @@ function renderEventBlock(event) {
 }
 
 function renderDayView() {
-  const events = getVisibleEventsForDate(selectedDate);
+  const events = getVisibleEventsForDate(selectedDate).filter(event => !event.isUnscheduled);
   els.schedule.className = "schedule-scroll day-grid";
   els.schedule.innerHTML = "";
 
@@ -333,7 +351,7 @@ function renderWeekView() {
           return `
             <div class="week-event" data-event-id="${event.id}">
               <span class="week-event-dot" style="background:${category.color}"></span>
-              <span>${minutesToTime(event.start)} ${escapeHTML(event.title)}</span>
+              <span>${event.isUnscheduled ? "시간미정" : minutesToTime(event.start)} ${escapeHTML(event.title)}</span>
             </div>
           `;
         }).join("")
@@ -375,6 +393,46 @@ function renderMonthView() {
   }).join("");
 }
 
+
+function renderSummary() {
+  if (!els.summaryCard) return;
+
+  els.summaryCard.classList.toggle("is-hidden", viewMode !== "day");
+
+  if (viewMode !== "day") return;
+
+  const events = getVisibleEventsForDate(selectedDate);
+  const unscheduled = events.filter(event => event.isUnscheduled);
+  const timed = events.filter(event => !event.isUnscheduled);
+
+  els.summaryCount.textContent = `${events.length}개`;
+
+  if (events.length === 0) {
+    els.summaryPreview.textContent = "일정 없음";
+    els.summaryDetail.innerHTML = `<p class="empty-text">이 날짜에 표시할 일정이 없습니다.</p>`;
+    return;
+  }
+
+  const previewItems = [];
+  if (unscheduled.length) previewItems.push(`시간미정 ${unscheduled.length}개`);
+  previewItems.push(...timed.slice(0, 2).map(event => `${minutesToTime(event.start)} ${event.title}`));
+
+  const hiddenCount = Math.max(0, events.length - previewItems.length);
+  els.summaryPreview.textContent = hiddenCount > 0
+    ? `${previewItems.join(" · ")} 외 ${hiddenCount}개`
+    : previewItems.join(" · ");
+
+  const unscheduledHTML = unscheduled.length
+    ? `<div class="summary-section-title">시간 미정</div>${unscheduled.map(event => `<div>• ${escapeHTML(event.title)}</div>`).join("")}`
+    : "";
+
+  const timedHTML = timed.length
+    ? `<div class="summary-section-title">시간 일정</div>${timed.map(event => `<div>• ${minutesToTime(event.start)} ${escapeHTML(event.title)}</div>`).join("")}`
+    : "";
+
+  els.summaryDetail.innerHTML = `${unscheduledHTML}${timedHTML}`;
+}
+
 function renderSchedule() {
   updateDateLabel();
   updateTodayButton();
@@ -389,6 +447,8 @@ function renderSchedule() {
     els.dateTitle.textContent = "월간 일정";
     renderMonthView();
   }
+
+  renderSummary();
 
   const total = getEventsForDate(selectedDate).length;
   const visible = getVisibleEventsForDate(selectedDate).length;
@@ -424,7 +484,7 @@ function renderSearchResults() {
     return `
       <div class="search-card" data-date="${event.date}" data-event-id="${event.id}">
         <strong>${escapeHTML(event.title)}</strong>
-        <span>${getKoreanDateLabel(event.date)} · ${minutesToTime(event.start)} - ${minutesToTime(event.end)}</span>
+        <span>${getKoreanDateLabel(event.date)} · ${event.isUnscheduled ? "시간미정" : `${minutesToTime(event.start)} - ${minutesToTime(event.end)}`}</span>
         <span>${escapeHTML(category.name)}${event.repeat !== "none" ? ` · ${getRepeatLabel(event.repeat)}` : ""}</span>
       </div>
     `;
@@ -495,6 +555,8 @@ function resetForm() {
   els.categorySelect.value = appData.categories[0]?.id || "";
   els.start.value = String(9 * 60);
   els.end.value = String(10 * 60);
+  if (els.isUnscheduled) els.isUnscheduled.checked = false;
+  if (els.timeFields) els.timeFields.classList.remove("is-hidden");
   els.repeat.value = "none";
   els.saveEventBtn.textContent = "추가하기";
   els.cancelEditBtn.style.display = "none";
@@ -514,8 +576,12 @@ function startEditEvent(id) {
   els.title.value = event.title;
   els.categorySelect.value = event.categoryId;
   els.memo.value = event.memo || "";
-  els.start.value = String(event.start);
-  els.end.value = String(event.end);
+  if (els.isUnscheduled) els.isUnscheduled.checked = Boolean(event.isUnscheduled);
+  if (els.timeFields) els.timeFields.classList.toggle("is-hidden", Boolean(event.isUnscheduled));
+  if (!event.isUnscheduled) {
+    els.start.value = String(event.start);
+    els.end.value = String(event.end);
+  }
   els.repeat.value = event.repeat || "none";
   els.saveEventBtn.textContent = "수정 저장하기";
   els.cancelEditBtn.style.display = "block";
@@ -530,8 +596,9 @@ function saveEvent() {
   const eventDateValue = els.eventDate.value || selectedDate;
   const categoryId = els.categorySelect.value;
   const memo = els.memo.value.trim();
-  const start = Number(els.start.value);
-  const end = Number(els.end.value);
+  const isUnscheduled = Boolean(els.isUnscheduled?.checked);
+  const start = isUnscheduled ? null : Number(els.start.value);
+  const end = isUnscheduled ? null : Number(els.end.value);
   const repeat = els.repeat.value;
 
   if (!title) {
@@ -544,12 +611,12 @@ function saveEvent() {
     return;
   }
 
-  if (start >= end) {
+  if (!isUnscheduled && start >= end) {
     alert("종료 시간은 시작 시간보다 늦어야 합니다.");
     return;
   }
 
-  if (hasOverlap(eventDateValue, start, end, editingEventId)) {
+  if (!isUnscheduled && hasOverlap(eventDateValue, start, end, editingEventId)) {
     alert("이미 해당 시간대에 일정이 있습니다.");
     return;
   }
@@ -563,6 +630,7 @@ function saveEvent() {
       title,
       categoryId,
       memo,
+      isUnscheduled,
       start,
       end,
       repeat
@@ -574,6 +642,7 @@ function saveEvent() {
       title,
       categoryId,
       memo,
+      isUnscheduled,
       start,
       end,
       repeat
@@ -627,6 +696,41 @@ function registerServiceWorker() {
     navigator.serviceWorker.register("service-worker.js").catch(() => {});
   });
 }
+
+
+if (els.settingsBtn) {
+  els.settingsBtn.addEventListener("click", () => {
+    els.settingsModal.classList.add("open");
+    els.settingsModal.setAttribute("aria-hidden", "false");
+  });
+}
+
+if (els.settingsCloseBtn) {
+  els.settingsCloseBtn.addEventListener("click", () => {
+    els.settingsModal.classList.remove("open");
+    els.settingsModal.setAttribute("aria-hidden", "true");
+  });
+}
+
+if (els.settingsBackdrop) {
+  els.settingsBackdrop.addEventListener("click", () => {
+    els.settingsModal.classList.remove("open");
+    els.settingsModal.setAttribute("aria-hidden", "true");
+  });
+}
+
+if (els.summaryToggle) {
+  els.summaryToggle.addEventListener("click", () => {
+    els.summaryCard.classList.toggle("open");
+  });
+}
+
+if (els.isUnscheduled) {
+  els.isUnscheduled.addEventListener("change", () => {
+    els.timeFields.classList.toggle("is-hidden", els.isUnscheduled.checked);
+  });
+}
+
 
 els.sectionToggles.forEach(button => {
   button.addEventListener("click", () => {
