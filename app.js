@@ -97,8 +97,22 @@ function getKoreanDateLabel(dateString, short = false) {
 
 function updateDatePickerLabel() {
   if (!els.datePickerLabel) return;
+
+  if (viewMode === "week") {
+    const weekDates = getWeekDates(selectedDate);
+    els.datePickerLabel.textContent = `${getKoreanDateLabel(weekDates[0], true)} - ${getKoreanDateLabel(weekDates[6], true)}`;
+    return;
+  }
+
+  if (viewMode === "month") {
+    const date = parseDate(selectedDate);
+    els.datePickerLabel.textContent = `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
+    return;
+  }
+
   const date = parseDate(selectedDate);
-  els.datePickerLabel.textContent = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+  const days = ["일", "월", "화", "수", "목", "금", "토"];
+  els.datePickerLabel.textContent = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 (${days[date.getDay()]})`;
 }
 
 function getWeekDates(dateString) {
@@ -457,15 +471,15 @@ function renderSchedule() {
   const today = getTodayString();
 
   if (viewMode === "day") {
-    els.dateTitle.textContent = selectedDate === today ? "오늘의 일정" : "선택한 날짜의 일정";
-    els.selectedDateText.textContent = getKoreanDateLabel(selectedDate);
+    els.dateTitle.textContent = "일간 일정";
+    if (els.selectedDateText) els.selectedDateText.textContent = getKoreanDateLabel(selectedDate);
   } else if (viewMode === "week") {
     els.dateTitle.textContent = "주간 일정";
-    els.selectedDateText.textContent = `${getKoreanDateLabel(getWeekDates(selectedDate)[0], true)} - ${getKoreanDateLabel(getWeekDates(selectedDate)[6], true)}`;
+    if (els.selectedDateText) els.selectedDateText.textContent = `${getKoreanDateLabel(getWeekDates(selectedDate)[0], true)} - ${getKoreanDateLabel(getWeekDates(selectedDate)[6], true)}`;
   } else {
     const date = parseDate(selectedDate);
     els.dateTitle.textContent = "월간 일정";
-    els.selectedDateText.textContent = `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
+    if (els.selectedDateText) els.selectedDateText.textContent = `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
   }
 
   els.dayViewBtn.classList.toggle("active", viewMode === "day");

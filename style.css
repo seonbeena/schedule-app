@@ -1220,3 +1220,494 @@ button:hover {
     font-size: 12px;
   }
 }
+
+
+/* v4 mobile date/filter refinements */
+@media (max-width: 900px) {
+  .schedule-header {
+    padding: 14px 12px 12px 14px;
+  }
+
+  .date-controls {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .date-picker-shell {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    width: 100%;
+    min-width: 0;
+    min-height: 36px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    order: -1;
+    border-radius: 11px;
+    background: #f8fafc;
+    border: 1px solid #dbe2ea;
+    color: #1f2937;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  #datePickerLabel {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .date-controls button {
+    min-width: 0;
+    min-height: 34px;
+    padding: 6px 4px;
+    font-size: 13px;
+  }
+
+  .schedule-subheader {
+    padding: 8px 9px;
+  }
+
+  .filter-area {
+    grid-template-columns: auto minmax(92px, 0.62fr) auto;
+    gap: 8px;
+  }
+
+  .filter-area label {
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .filter-area select {
+    min-width: 0;
+    max-width: 100%;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 6px 26px 6px 10px;
+  }
+
+  #eventCount {
+    font-size: 13px;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .date-picker-shell {
+    min-height: 35px;
+    padding: 7px 10px;
+    font-size: 13px;
+  }
+
+  .date-controls {
+    gap: 6px;
+  }
+
+  .date-controls button {
+    min-height: 33px;
+    font-size: 13px;
+  }
+
+  .filter-area {
+    grid-template-columns: auto minmax(78px, 0.58fr) auto;
+    gap: 7px;
+  }
+
+  .filter-area label,
+  #eventCount {
+    font-size: 13px;
+  }
+
+  .filter-area select {
+    font-size: 14px;
+  }
+}
+
+
+/* final dark UI refinement */
+:root {
+  --bg: #111827;
+  --card: #1f2937;
+  --card-soft: #273449;
+  --primary: #64748b;
+  --text: #f8fafc;
+  --muted: #cbd5e1;
+  --subtle: #94a3b8;
+  --border: #334155;
+}
+
+html,
+body {
+  background: #020617;
+}
+
+body {
+  color: var(--text);
+}
+
+header {
+  background: #0f172a;
+  border-bottom-color: #1e293b;
+}
+
+header p {
+  color: var(--subtle);
+}
+
+.panel,
+.schedule-wrap {
+  background: var(--card);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+}
+
+.section {
+  border-top-color: #334155;
+}
+
+.section-toggle,
+button,
+.floating-add-btn,
+.segmented-control button.active {
+  background: #64748b;
+  color: #f8fafc;
+}
+
+.section-toggle {
+  border: 1px solid #475569;
+}
+
+.secondary-btn,
+.date-controls button {
+  border: 1px solid #475569;
+  background: #273449;
+  color: #e2e8f0;
+}
+
+.schedule-header {
+  border-bottom-color: var(--border);
+}
+
+.date-picker-shell {
+  background: #111827;
+  border: 1px solid #475569;
+  color: #f8fafc;
+  border-radius: 11px;
+  min-height: 32px;
+  padding: 6px 11px;
+  font-size: 13px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.date-picker-shell input {
+  opacity: 0;
+}
+
+.schedule-subheader {
+  background: var(--card);
+  border-bottom-color: var(--border);
+  padding: 7px 9px 8px;
+  gap: 6px;
+}
+
+.selected-date-wrap,
+#selectedDateText {
+  display: none !important;
+}
+
+.segmented-control {
+  padding: 2px;
+  background: #111827;
+  border: 1px solid #334155;
+}
+
+.segmented-control button {
+  min-height: 29px;
+  padding: 4px 6px;
+  font-size: 13px;
+  border: 0;
+  background: transparent;
+  color: #e2e8f0;
+}
+
+.filter-area {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  overflow: hidden;
+  padding: 5px 10px;
+  border-radius: 12px;
+  background: #111827;
+  border: 1px solid #334155;
+}
+
+.filter-area label {
+  color: #e2e8f0;
+  font-size: 13px;
+  font-weight: 900;
+  white-space: nowrap;
+  letter-spacing: -0.02em;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #273449;
+  border: 1px solid #475569;
+}
+
+.filter-area label::before {
+  content: "●";
+  margin-right: 5px;
+  color: #93c5fd;
+  font-size: 9px;
+  vertical-align: 1px;
+}
+
+#eventCount {
+  color: #dbeafe;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+  justify-self: end;
+  text-align: center;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: #273449;
+  border: 1px solid #475569;
+}
+
+input,
+select {
+  border-color: #475569;
+  background-color: #111827;
+  color: #f8fafc;
+}
+
+select {
+  border-radius: 999px;
+  min-height: 30px;
+  padding: 4px 20px;
+  font-size: 14px;
+  font-weight: 800;
+  text-align: center;
+  text-align-last: center;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, #cbd5e1 50%), linear-gradient(135deg, #cbd5e1 50%, transparent 50%);
+  background-position: calc(100% - 15px) 13px, calc(100% - 10px) 13px;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.category-item,
+.search-card {
+  background: #111827;
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+.search-card:hover {
+  background: #172033;
+}
+
+.search-card span,
+.empty-text,
+.hint {
+  color: #cbd5e1;
+}
+
+.category-delete-disabled,
+.icon-btn {
+  background: #334155;
+  color: #f8fafc;
+  border: 1px solid #475569;
+}
+
+.soft-danger-btn {
+  background: #3b2a1f;
+  color: #fed7aa;
+  border: 1px solid #7c2d12;
+}
+
+.schedule-scroll {
+  background: #1f2937;
+}
+
+.time-cell {
+  background: #172033;
+  color: #94a3b8;
+  border-right-color: #334155;
+}
+
+.time-cell,
+.slot {
+  border-bottom-color: #334155;
+}
+
+.slot {
+  background: #1f2937;
+  border-right-color: #334155;
+}
+
+.slot:hover {
+  background: #243244;
+}
+
+.week-head,
+.corner-cell,
+.month-day-name {
+  background: #172033;
+  color: #cbd5e1;
+  border-color: #334155;
+}
+
+.month-grid {
+  background: #334155;
+}
+
+.month-cell,
+.month-day-name {
+  background: #1f2937;
+}
+
+.month-cell:hover {
+  background: #243244;
+}
+
+.month-cell.muted {
+  background: #172033;
+  color: #64748b;
+}
+
+.month-cell.today {
+  outline: 2px solid #93c5fd;
+}
+
+.month-event {
+  color: #e2e8f0;
+}
+
+.month-count,
+.month-more {
+  color: #cbd5e1;
+}
+
+.event {
+  color: #1f2937;
+}
+
+.modal-backdrop {
+  background: rgba(2, 6, 23, 0.68);
+}
+
+.event-sheet {
+  background: #1f2937;
+  border: 1px solid #334155;
+  box-shadow: 0 -14px 36px rgba(0, 0, 0, 0.38);
+}
+
+.sheet-handle {
+  background: #64748b;
+}
+
+.sheet-header h2 {
+  color: #f8fafc;
+}
+
+label {
+  color: #cbd5e1;
+}
+
+@media (max-width: 900px) {
+  body {
+    background: #111827;
+  }
+
+  header {
+    background: #0f172a;
+  }
+
+  .panel,
+  .schedule-wrap {
+    background: #1f2937;
+  }
+
+  .schedule-header {
+    padding: 10px 11px 8px 13px;
+  }
+
+  .schedule-header h2 {
+    margin: 0 0 6px 4px;
+    font-size: 15px;
+  }
+
+  .date-controls {
+    gap: 6px;
+  }
+
+  .date-controls button {
+    min-height: 29px;
+    font-size: 12px;
+    padding: 4px 6px;
+    border-radius: 9px;
+  }
+
+  .date-picker-shell {
+    min-height: 32px;
+    padding: 6px 11px;
+    font-size: 13px;
+  }
+
+  .schedule-subheader {
+    padding: 7px 9px 8px;
+    gap: 6px;
+  }
+
+  .filter-area {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 12px;
+    padding: 5px 10px;
+  }
+
+  .filter-area label {
+    font-size: 13px;
+    padding: 4px 8px;
+  }
+
+  #eventCount {
+    font-size: 13px;
+    padding: 4px 9px;
+  }
+
+  .filter-area select {
+    min-height: 30px;
+    padding: 4px 20px;
+    font-size: 14px;
+    text-align: center;
+    text-align-last: center;
+  }
+
+  .segmented-control {
+    padding: 2px;
+  }
+
+  .segmented-control button {
+    min-height: 29px;
+    padding: 4px 6px;
+    font-size: 13px;
+  }
+
+  .event-sheet {
+    background: #1f2937;
+    border-color: #334155;
+  }
+}

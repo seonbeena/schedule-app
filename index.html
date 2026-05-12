@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#475569" />
+  <meta name="theme-color" content="#111827" />
   <meta name="description" content="날짜별·주간·월간 일정, 반복 일정, 카테고리 색상, 검색을 관리할 수 있는 일정표입니다." />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icon-192.png" />
   <link rel="stylesheet" href="style.css" />
-  <title>일정표</title>
+  <title>데이플랜</title>
 </head>
 <body>
   <header>
-    <h1>일정표</h1>
-    <p>오늘과 이번 주의 일정을 빠르게 확인하세요.</p>
+    <h1>데이플랜</h1>
+    <p>오늘의 시간부터 한 달의 흐름까지 가볍게 정리하세요.</p>
   </header>
 
   <main class="container">
@@ -56,11 +56,11 @@
 
     <section class="schedule-wrap">
       <div class="schedule-header">
-        <h2 id="dateTitle">오늘의 일정</h2>
+        <h2 id="dateTitle">일간 일정</h2>
         <div class="date-controls">
           <button id="prevDateBtn" class="secondary-btn" type="button">이전</button>
           <div class="date-picker-shell">
-            <span id="datePickerLabel">날짜 선택</span>
+            <span id="datePickerLabel"></span>
             <input id="datePicker" type="date" aria-label="날짜 선택" />
           </div>
           <button id="todayBtn" class="secondary-btn" type="button">오늘</button>
@@ -69,12 +69,8 @@
       </div>
 
       <div class="schedule-subheader">
-        <div class="selected-date-wrap">
-          <span id="selectedDateText"></span>
-        </div>
-
-        <div class="view-controls segmented-control">
-          <button id="dayViewBtn" class="active" type="button">하루</button>
+<div class="view-controls segmented-control">
+          <button id="dayViewBtn" class="active" type="button">일간</button>
           <button id="weekViewBtn" type="button">주간</button>
           <button id="monthViewBtn" type="button">월간</button>
         </div>
