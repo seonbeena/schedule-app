@@ -1952,7 +1952,7 @@ select {
 #end,
 #repeat,
 #typeFilter {
-  font-size: 14px !important;
+  font-size: 16px !important;
 }
 
 /* Slightly reduce padding so 16px controls do not feel too bulky */
@@ -1978,7 +1978,7 @@ select {
   #end,
   #repeat,
   #typeFilter {
-    font-size: 14px !important;
+    font-size: 16px !important;
   }
 }
 
@@ -2018,5 +2018,105 @@ select {
     line-height: 20px !important;
     padding-top: 5px !important;
     padding-bottom: 5px !important;
+  }
+}
+
+
+/* feedback step 1: compact date navigation + add-date modal + natural mobile scroll */
+.compact-date-controls {
+  display: grid !important;
+  grid-template-columns: 34px minmax(0, 1fr) 34px !important;
+  gap: 7px !important;
+  align-items: center;
+}
+
+.compact-date-controls .date-picker-shell {
+  grid-column: auto !important;
+}
+
+.date-arrow-btn {
+  width: 34px !important;
+  min-width: 34px !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  padding: 0 !important;
+  border-radius: 999px !important;
+  font-size: 22px !important;
+  line-height: 1 !important;
+  border: 1px solid #475569 !important;
+  background: #273449 !important;
+  color: #e2e8f0 !important;
+}
+
+.today-chip-btn {
+  display: none;
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: auto !important;
+  min-height: 28px !important;
+  padding: 4px 12px !important;
+  border-radius: 999px !important;
+  border: 1px solid #475569 !important;
+  background: #273449 !important;
+  color: #dbeafe !important;
+  font-size: 12px !important;
+  font-weight: 900;
+}
+
+.today-chip-btn.show {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#eventDate {
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .compact-date-controls {
+    grid-template-columns: 32px minmax(0, 1fr) 32px !important;
+    gap: 7px !important;
+  }
+
+  .date-arrow-btn {
+    width: 32px !important;
+    min-width: 32px !important;
+    height: 31px !important;
+    min-height: 31px !important;
+    font-size: 21px !important;
+  }
+
+  .compact-date-controls .date-picker-shell {
+    min-height: 31px !important;
+    padding: 5px 9px !important;
+    font-size: 13px !important;
+  }
+
+  .schedule-scroll {
+    max-height: none !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    -webkit-overflow-scrolling: auto !important;
+  }
+
+  .schedule-wrap {
+    overflow: visible !important;
+  }
+
+  .schedule-subheader {
+    position: static !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .compact-date-controls {
+    grid-template-columns: 31px minmax(0, 1fr) 31px !important;
+    gap: 6px !important;
+  }
+
+  .date-arrow-btn {
+    width: 31px !important;
+    min-width: 31px !important;
   }
 }

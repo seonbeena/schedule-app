@@ -1,7 +1,7 @@
 {
-  "name": "데이플랜",
-  "short_name": "데이플랜",
-  "description": "오늘의 시간부터 한 달의 흐름까지 가볍게 정리하는 일정표입니다.",
+  "name": "데이플랜 v15",
+  "short_name": "데이플랜 v15",
+  "description": "데이플랜 v15 - 피드백 1차 반영본",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#111827",
