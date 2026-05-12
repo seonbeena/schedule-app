@@ -1,11 +1,11 @@
-const CACHE_NAME = "dayplan-mobile-clean-v6";
+const CACHE_NAME = "dayplan-mobile-clean-v7";
 const ASSETS = [
-  "./index.html?v=mobile-clean-v6",
-  "./style.css?v=mobile-clean-v6",
-  "./app.js?v=mobile-clean-v6",
-  "./manifest.json?v=mobile-clean-v6",
-  "./icon-192.png?v=mobile-clean-v6",
-  "./icon-512.png?v=mobile-clean-v6"
+  "./index.html?v=mobile-clean-v7",
+  "./style.css?v=mobile-clean-v7",
+  "./app.js?v=mobile-clean-v7",
+  "./manifest.json?v=mobile-clean-v7",
+  "./icon-192.png?v=mobile-clean-v7",
+  "./icon-512.png?v=mobile-clean-v7"
 ];
 
 self.addEventListener("install", event => {

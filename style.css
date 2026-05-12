@@ -1219,3 +1219,133 @@ header {
 .settings-sheet {
   max-height: min(74vh, 520px);
 }
+
+
+/* mobile clean v7: compact writable fields + input height stability */
+.event-sheet {
+  contain: layout;
+}
+
+.event-sheet label,
+.event-sheet .sheet-header,
+.event-sheet .time-form-grid,
+.event-sheet .button-row,
+.event-sheet .unscheduled-row {
+  flex-shrink: 0;
+}
+
+.event-sheet input,
+.event-sheet select {
+  height: 31px !important;
+  min-height: 31px !important;
+  max-height: 31px !important;
+  line-height: 18px !important;
+  font-size: 13px !important;
+  font-weight: 800;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  vertical-align: middle;
+  overflow: hidden;
+}
+
+.event-sheet select {
+  padding-left: 8px !important;
+  padding-right: 22px !important;
+  text-align: left;
+  text-align-last: left;
+  background-position: calc(100% - 14px) 12px, calc(100% - 9px) 12px !important;
+}
+
+.modal-date-field {
+  height: 30px !important;
+  min-height: 30px !important;
+  max-height: 30px !important;
+  line-height: 18px !important;
+  font-size: 13px !important;
+  font-weight: 800;
+}
+
+#eventDateLabel {
+  font-size: 13px !important;
+  line-height: 18px !important;
+  font-weight: 800;
+}
+
+.modal-date-field #eventDate {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0;
+}
+
+.unscheduled-row {
+  min-height: 31px !important;
+  padding: 6px 8px !important;
+  border-radius: 9px !important;
+  font-size: 12px !important;
+  line-height: 16px !important;
+}
+
+.unscheduled-row input {
+  width: 16px !important;
+  min-width: 16px !important;
+  max-width: 16px !important;
+  height: 16px !important;
+  min-height: 16px !important;
+  max-height: 16px !important;
+  padding: 0 !important;
+}
+
+.event-sheet .button-row button,
+.event-sheet #saveEventBtn,
+.event-sheet #cancelEditBtn,
+.event-sheet #deleteEditingBtn {
+  min-height: 31px !important;
+  height: 31px !important;
+  font-size: 12px !important;
+  line-height: 16px !important;
+  border-radius: 8px !important;
+}
+
+/* compact settings inputs/search fields */
+.settings-section input,
+.settings-section select {
+  height: 26px !important;
+  min-height: 26px !important;
+  max-height: 26px !important;
+  line-height: 16px !important;
+  font-size: 12px !important;
+  font-weight: 700;
+  padding-top: 3px !important;
+  padding-bottom: 3px !important;
+  border-radius: 7px !important;
+}
+
+.settings-section input[type="color"] {
+  padding: 2px !important;
+}
+
+.settings-section #searchInput,
+.settings-section #newCategoryName {
+  font-size: 12px !important;
+}
+
+/* avoid small visual jumps while composing Korean text */
+input,
+select {
+  -webkit-text-size-adjust: 100%;
+}
+
+@supports (-webkit-touch-callout: none) {
+  .event-sheet input,
+  .event-sheet select,
+  .settings-section input,
+  .settings-section select {
+    transform: translateZ(0);
+  }
+}
