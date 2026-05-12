@@ -1,1 +1,831 @@
-const startHour=6,endHour=26,slotMinutes=30,slotHeight=42,storageKey="date-schedule-app-v3";const defaultCategories=[{id:"study",name:"공부",color:"#93c5fd",protected:true},{id:"class",name:"수업",color:"#c4b5fd",protected:true},{id:"work",name:"업무",color:"#fdba74",protected:true},{id:"rest",name:"휴식",color:"#86efac",protected:true},{id:"etc",name:"기타",color:"#94a3b8",protected:true}];const els={title:document.getElementById("title"),categorySelect:document.getElementById("categorySelect"),memo:document.getElementById("memo"),start:document.getElementById("start"),end:document.getElementById("end"),repeat:document.getElementById("repeat"),saveEventBtn:document.getElementById("saveEventBtn"),eventButtonRow:document.getElementById("eventButtonRow"),cancelEditBtn:document.getElementById("cancelEditBtn"),clearDayBtn:document.getElementById("clearDayBtn"),deleteEditingBtn:document.getElementById("deleteEditingBtn"),newCategoryName:document.getElementById("newCategoryName"),newCategoryColor:document.getElementById("newCategoryColor"),addCategoryBtn:document.getElementById("addCategoryBtn"),categoryList:document.getElementById("categoryList"),searchInput:document.getElementById("searchInput"),searchResults:document.getElementById("searchResults"),sectionToggles:document.querySelectorAll("[data-toggle]"),floatingAddBtn:document.getElementById("floatingAddBtn"),dateTitle:document.getElementById("dateTitle"),datePicker:document.getElementById("datePicker"),prevDateBtn:document.getElementById("prevDateBtn"),nextDateBtn:document.getElementById("nextDateBtn"),todayBtn:document.getElementById("todayBtn"),selectedDateText:document.getElementById("selectedDateText"),dayViewBtn:document.getElementById("dayViewBtn"),weekViewBtn:document.getElementById("weekViewBtn"),monthViewBtn:document.getElementById("monthViewBtn"),typeFilter:document.getElementById("typeFilter"),eventCount:document.getElementById("eventCount"),schedule:document.getElementById("schedule")};let appData=loadAppData(),selectedDate=getTodayString(),viewMode="day",editingEventId=null;function pad(e){return String(e).padStart(2,"0")}function escapeHTML(e){return String(e).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}function formatDate(e){return`${e.getFullYear()}-${pad(e.getMonth()+1)}-${pad(e.getDate())}`}function getTodayString(){return formatDate(new Date)}function parseDate(e){return new Date(`${e}T00:00:00`)}function addDays(e,t){const n=parseDate(e);return n.setDate(n.getDate()+t),formatDate(n)}function minutesToTime(e){const t=e%(24*60),n=Math.floor(t/60),a=t%60;return`${pad(n)}:${pad(a)}`}function getKoreanDateLabel(e,t=false){const n=parseDate(e),a=["일","월","화","수","목","금","토"];return t?`${n.getMonth()+1}/${n.getDate()} (${a[n.getDay()]})`:`${n.getFullYear()}년 ${n.getMonth()+1}월 ${n.getDate()}일 (${a[n.getDay()]})`}function getWeekDates(e){const t=parseDate(e),n=t.getDay(),a=n===0?-6:1-n,o=new Date(t);return o.setDate(t.getDate()+a),Array.from({length:7},(_,e)=>{const t=new Date(o);return t.setDate(o.getDate()+e),formatDate(t)})}function getMonthDates(e){const t=parseDate(e),n=new Date(t.getFullYear(),t.getMonth(),1),a=n.getDay(),o=new Date(n);return o.setDate(n.getDate()-a),Array.from({length:42},(_,e)=>{const t=new Date(o);return t.setDate(o.getDate()+e),formatDate(t)})}function mergeCategories(e=[]){const t=new Map;return[...e,...defaultCategories].forEach(e=>{e&&e.id&&t.set(e.id,{id:e.id,name:e.name||"이름 없음",color:e.color||"#94a3b8",protected:defaultCategories.some(t=>t.id===e.id)||Boolean(e.protected)})}),Array.from(t.values())}function loadAppData(){const e={categories:defaultCategories,events:[]};try{const t=JSON.parse(localStorage.getItem(storageKey));return t?{categories:mergeCategories(t.categories),events:Array.isArray(t.events)?t.events:[]}:e}catch{return e}}function saveAppData(){localStorage.setItem(storageKey,JSON.stringify(appData)),renderSearchResults()}function createId(e){return`${e}-${Date.now()}-${Math.random().toString(16).slice(2)}`}function getCategory(e){return appData.categories.find(t=>t.id===e)||appData.categories[0]}function createTimeOptions(){els.start.innerHTML="",els.end.innerHTML="";for(let e=60*startHour;e<=60*endHour;e+=slotMinutes){const t=document.createElement("option");t.value=e,t.textContent=minutesToTime(e),els.start.appendChild(t);const n=document.createElement("option");n.value=e,n.textContent=minutesToTime(e),els.end.appendChild(n)}els.start.value=540,els.end.value=600}function renderCategoryControls(){const e=els.categorySelect.value,t=els.typeFilter.value,n=appData.categories.map(e=>`<option value="${e.id}">${escapeHTML(e.name)}</option>`).join("");els.categorySelect.innerHTML=n,els.typeFilter.innerHTML=`<option value="all">전체</option>${n}`,e&&appData.categories.some(t=>t.id===e)&&(els.categorySelect.value=e),(t==="all"||appData.categories.some(e=>e.id===t))&&(els.typeFilter.value=t||"all"),els.categoryList.innerHTML=appData.categories.map(e=>`<div class="category-item"><div class="category-left"><span class="dot" style="background:${e.color}"></span><span>${escapeHTML(e.name)}</span></div>${e.protected?"":`<button class="danger-btn" type="button" data-category-id="${e.id}">삭제</button>`}</div>`).join("")}function addCategory(){const e=els.newCategoryName.value.trim(),t=els.newCategoryColor.value;if(!e)return void alert("종류 이름을 입력하세요.");if(appData.categories.some(t=>t.name===e))return void alert("이미 같은 이름의 종류가 있습니다.");appData.categories.push({id:createId("category"),name:e,color:t,protected:false}),els.newCategoryName.value="",saveAppData(),renderAll()}function deleteCategory(e){const t=getCategory(e);if(!t||t.protected)return;if(appData.events.some(t=>t.categoryId===e))return void alert("이미 사용 중인 종류는 삭제할 수 없습니다. 해당 일정을 먼저 다른 종류로 수정하세요.");appData.categories=appData.categories.filter(t=>t.id!==e),saveAppData(),renderAll()}function shouldShowRecurringEvent(e,t){if(!e.repeat||e.repeat==="none")return e.date===t;if(t<e.date)return false;const n=parseDate(t),a=parseDate(e.date);if(e.repeat==="daily")return true;if(e.repeat==="weekdays"){const e=n.getDay();return e>=1&&e<=5}return e.repeat==="weekly"?n.getDay()===a.getDay():false}function getEventsForDate(e){return appData.events.filter(t=>shouldShowRecurringEvent(t,e)).sort((e,t)=>e.start-t.start)}function getVisibleEventsForDate(e){const t=getEventsForDate(e);return els.typeFilter.value==="all"?t:t.filter(e=>e.categoryId===els.typeFilter.value)}function hasOverlap(e,t,n,a=null){return getEventsForDate(e).some(e=>e.id!==a&&t<e.end&&n>e.start)}function getRepeatLabel(e){return{none:"반복 없음",daily:"매일 반복",weekly:"매주 반복",weekdays:"평일 반복"}[e]||"반복 없음"}function renderEvent(e,t=false){const n=getCategory(e.categoryId),a=(e.end-e.start)/slotMinutes,o=Math.max(slotHeight-8,a*slotHeight-8);return`<div class="event" data-event-id="${e.id}" style="height:${o}px; background:${n.color};" title="${escapeHTML(e.title)}"><div style="min-width:0;"><div class="event-title">${escapeHTML(e.title)}</div><div class="event-time">${minutesToTime(e.start)} - ${minutesToTime(e.end)}${e.repeat&&e.repeat!=="none"?` · ${getRepeatLabel(e.repeat)}`:""}</div>${!t&&e.memo?`<div class="event-memo">${escapeHTML(e.memo)}</div>`:""}</div></div>`}function renderDayView(){els.schedule.className="day-grid",els.schedule.innerHTML="";const e=getVisibleEventsForDate(selectedDate);for(let t=60*startHour;t<60*endHour;t+=slotMinutes){const n=document.createElement("div");n.className="time-cell",n.textContent=minutesToTime(t);const a=document.createElement("div");a.className="slot",a.dataset.time=t,a.dataset.date=selectedDate;const o=e.find(e=>e.start===t);o&&(a.innerHTML=renderEvent(o)),els.schedule.appendChild(n),els.schedule.appendChild(a)}}function renderWeekView(){const e=getWeekDates(selectedDate);els.schedule.className="week-grid",els.schedule.innerHTML='<div class="corner-cell">시간</div>',e.forEach(e=>{els.schedule.innerHTML+=`<div class="week-head">${getKoreanDateLabel(e,true)}</div>`});for(let t=60*startHour;t<60*endHour;t+=slotMinutes)els.schedule.innerHTML+=`<div class="time-cell">${minutesToTime(t)}</div>`,e.forEach(e=>{const n=getVisibleEventsForDate(e).find(e=>e.start===t);els.schedule.innerHTML+=`<div class="slot" data-date="${e}" data-time="${t}">${n?renderEvent(n,true):""}</div>`})}function renderMonthView(){const e=parseDate(selectedDate),t=e.getMonth(),n=getTodayString(),a=["일","월","화","수","목","금","토"],o=getMonthDates(selectedDate);els.schedule.className="month-grid",els.schedule.innerHTML=a.map(e=>`<div class="month-day-name">${e}</div>`).join(""),o.forEach(e=>{const a=parseDate(e),o=getVisibleEventsForDate(e),r=a.getMonth()!==t,s=e===n,l=o.slice(0,3),i=Math.max(0,o.length-l.length),d=l.map(e=>{const t=getCategory(e.categoryId);return`<div class="month-event"><span class="month-event-dot" style="background:${t.color}"></span><span class="month-event-title">${escapeHTML(e.title)}</span></div>`}).join(""),c=o.slice(0,6).map(e=>{const t=getCategory(e.categoryId);return`<span class="month-dot" style="background:${t.color}"></span>`}).join("");els.schedule.innerHTML+=`<div class="month-cell ${r?"muted":""} ${s?"today":""}" data-date="${e}"><div class="month-date"><span>${a.getDate()}</span>${o.length?`<span class="month-count">${o.length}개</span>`:""}</div><div class="month-events">${d}${i?`<div class="month-more">+${i}개</div>`:""}</div><div class="month-dots">${c}${o.length>6?`<span class="month-more">+${o.length-6}</span>`:""}</div></div>`})}function renderSchedule(){viewMode==="day"?renderDayView():viewMode==="week"?renderWeekView():renderMonthView();const e=getEventsForDate(selectedDate),t=getVisibleEventsForDate(selectedDate);els.eventCount.textContent=els.typeFilter.value==="all"?`${e.length}개 일정`:`${t.length}/${e.length}개 일정`;const n=getTodayString();if(viewMode==="day")els.dateTitle.textContent=selectedDate===n?"오늘의 일정":"선택한 날짜의 일정",els.selectedDateText.textContent=getKoreanDateLabel(selectedDate);else if(viewMode==="week")els.dateTitle.textContent="주간 일정",els.selectedDateText.textContent=`${getKoreanDateLabel(getWeekDates(selectedDate)[0],true)} - ${getKoreanDateLabel(getWeekDates(selectedDate)[6],true)}`;else{const e=parseDate(selectedDate);els.dateTitle.textContent="월간 일정",els.selectedDateText.textContent=`${e.getFullYear()}년 ${e.getMonth()+1}월`}els.dayViewBtn.classList.toggle("active",viewMode==="day"),els.weekViewBtn.classList.toggle("active",viewMode==="week"),els.monthViewBtn.classList.toggle("active",viewMode==="month")}function saveEvent(){const e=els.title.value.trim(),t=els.categorySelect.value,n=els.memo.value.trim(),a=Number(els.start.value),o=Number(els.end.value),r=els.repeat.value;if(!e)return void alert("일정 이름을 입력하세요.");if(a>=o)return void alert("종료 시간은 시작 시간보다 늦어야 합니다.");if(hasOverlap(selectedDate,a,o,editingEventId))return void alert("이미 해당 시간대에 일정이 있습니다.");if(editingEventId){const l=appData.events.find(e=>e.id===editingEventId);if(!l)return;Object.assign(l,{title:e,categoryId:t,memo:n,start:a,end:o,repeat:r,date:selectedDate})}else appData.events.push({id:createId("event"),date:selectedDate,title:e,categoryId:t,memo:n,start:a,end:o,repeat:r});saveAppData(),resetForm(),renderAll()}function openSection(e){document.querySelectorAll(".collapsible-section").forEach(t=>{const n=t.dataset.section===e;t.classList.toggle("open",n);const a=t.querySelector(".toggle-icon");a&&(a.textContent=n?"−":"+")})}function toggleSection(e){const t=document.querySelector(`.collapsible-section[data-section="${e}"]`);if(!t)return;const n=!t.classList.contains("open");document.querySelectorAll(".collapsible-section").forEach(e=>{e.classList.remove("open");const t=e.querySelector(".toggle-icon");t&&(t.textContent="+")}),n&&(t.classList.add("open"),t.querySelector(".toggle-icon").textContent="−")}function startEditEvent(e){const t=appData.events.find(t=>t.id===e);t&&(openSection("event-form"),editingEventId=e,selectedDate=t.date,els.datePicker.value=selectedDate,els.title.value=t.title,els.categorySelect.value=t.categoryId,els.memo.value=t.memo||"",els.start.value=t.start,els.end.value=t.end,els.repeat.value=t.repeat||"none",els.saveEventBtn.textContent="수정 저장하기",els.cancelEditBtn.style.display="block",els.deleteEditingBtn.style.display="block",els.eventButtonRow.classList.add("editing"),renderSchedule())}function resetForm(){editingEventId=null,els.title.value="",els.memo.value="",els.categorySelect.value=appData.categories[0]?.id||"",els.start.value=540,els.end.value=600,els.repeat.value="none",els.saveEventBtn.textContent="추가하기",els.cancelEditBtn.style.display="none",els.deleteEditingBtn.style.display="none",els.eventButtonRow.classList.remove("editing")}function deleteEvent(e){const t=appData.events.find(t=>t.id===e);if(!t)return;const n=t.repeat&&t.repeat!=="none"?"반복 일정 전체를 삭제할까요?":"이 일정을 삭제할까요?";confirm(n)&&(appData.events=appData.events.filter(t=>t.id!==e),editingEventId===e&&resetForm(),saveAppData(),renderAll())}function clearSelectedDate(){const e=getEventsForDate(selectedDate);e.length===0?alert("삭제할 일정이 없습니다."):confirm("이 날짜에 직접 등록된 일정을 모두 삭제할까요? 반복 일정은 시작 날짜가 이 날짜인 경우에만 삭제됩니다.")&&(appData.events=appData.events.filter(e=>e.date!==selectedDate),resetForm(),saveAppData(),renderAll())}function renderSearchResults(){const e=els.searchInput.value.trim().toLowerCase();if(!e)return void(els.searchResults.innerHTML='<p class="empty-text">검색어를 입력하면 저장된 전체 일정에서 찾아줍니다.</p>');const t=appData.events.filter(t=>{const n=getCategory(t.categoryId),a=`${t.title} ${t.memo||""} ${n?.name||""}`.toLowerCase();return a.includes(e)}).sort((e,t)=>e.date!==t.date?e.date.localeCompare(t.date):e.start-t.start);if(t.length===0)return void(els.searchResults.innerHTML='<p class="empty-text">검색 결과가 없습니다.</p>');els.searchResults.innerHTML=t.map(e=>{const t=getCategory(e.categoryId);return`<div class="search-card" data-date="${e.date}" data-id="${e.id}"><strong>${escapeHTML(e.title)}</strong><span>${getKoreanDateLabel(e.date)} · ${minutesToTime(e.start)} - ${minutesToTime(e.end)}</span><span>${escapeHTML(t.name)}${e.repeat&&e.repeat!=="none"?` · ${getRepeatLabel(e.repeat)}`:""}</span>${e.memo?`<span>${escapeHTML(e.memo)}</span>`:""}</div>`}).join("")}function changeDate(e){if(resetForm(),viewMode==="month"){const t=parseDate(selectedDate);t.setMonth(t.getMonth()+e),selectedDate=formatDate(t)}else selectedDate=addDays(selectedDate,viewMode==="week"?7*e:e);els.datePicker.value=selectedDate,renderSchedule()}function closeAllSectionsOnMobile(){window.matchMedia("(max-width: 900px)").matches&&document.querySelectorAll(".collapsible-section").forEach(e=>{e.classList.remove("open");const t=e.querySelector(".toggle-icon");t&&(t.textContent="+")})}function renderAll(){renderCategoryControls(),renderSchedule(),renderSearchResults()}function registerServiceWorker(){"serviceWorker"in navigator&&window.addEventListener("load",()=>{navigator.serviceWorker.register("service-worker.js").catch(e=>console.log("Service Worker registration failed:",e))})}els.sectionToggles.forEach(e=>{e.addEventListener("click",()=>toggleSection(e.dataset.toggle))}),els.floatingAddBtn.addEventListener("click",()=>{openSection("event-form"),document.querySelector('[data-section="event-form"]').scrollIntoView({behavior:"smooth",block:"start"})}),els.saveEventBtn.addEventListener("click",saveEvent),els.cancelEditBtn.addEventListener("click",resetForm),els.clearDayBtn.addEventListener("click",clearSelectedDate),els.deleteEditingBtn.addEventListener("click",()=>{editingEventId&&deleteEvent(editingEventId)}),els.addCategoryBtn.addEventListener("click",addCategory),els.categoryList.addEventListener("click",e=>{const t=e.target.closest("button[data-category-id]");t&&deleteCategory(t.dataset.categoryId)}),els.searchInput.addEventListener("input",renderSearchResults),els.searchResults.addEventListener("click",e=>{const t=e.target.closest(".search-card");t&&(selectedDate=t.dataset.date,els.datePicker.value=selectedDate,viewMode="day",resetForm(),renderSchedule())}),els.schedule.addEventListener("click",e=>{const t=e.target.closest(".month-cell[data-date]");if(t)return selectedDate=t.dataset.date,els.datePicker.value=selectedDate,viewMode="day",resetForm(),void renderSchedule();const n=e.target.closest(".event[data-event-id]");n&&startEditEvent(n.dataset.eventId)}),els.datePicker.addEventListener("change",e=>{selectedDate=e.target.value,resetForm(),renderSchedule()}),els.prevDateBtn.addEventListener("click",()=>changeDate(-1)),els.nextDateBtn.addEventListener("click",()=>changeDate(1)),els.todayBtn.addEventListener("click",()=>{selectedDate=getTodayString(),els.datePicker.value=selectedDate,resetForm(),renderSchedule()}),els.dayViewBtn.addEventListener("click",()=>{viewMode="day",renderSchedule()}),els.weekViewBtn.addEventListener("click",()=>{viewMode="week",renderSchedule()}),els.monthViewBtn.addEventListener("click",()=>{viewMode="month",renderSchedule()}),els.typeFilter.addEventListener("change",renderSchedule),createTimeOptions(),els.datePicker.value=selectedDate,renderAll(),closeAllSectionsOnMobile(),registerServiceWorker();
+const startHour = 6;
+const endHour = 26;
+const slotMinutes = 30;
+const slotHeight = 42;
+const storageKey = "date-schedule-app-v4";
+
+const defaultCategories = [
+  { id: "study", name: "공부", color: "#93c5fd", protected: true },
+  { id: "class", name: "수업", color: "#c4b5fd", protected: true },
+  { id: "work", name: "업무", color: "#fdba74", protected: true },
+  { id: "rest", name: "휴식", color: "#86efac", protected: true },
+  { id: "etc", name: "기타", color: "#94a3b8", protected: true }
+];
+
+const els = {
+  title: document.getElementById("title"),
+  categorySelect: document.getElementById("categorySelect"),
+  memo: document.getElementById("memo"),
+  start: document.getElementById("start"),
+  end: document.getElementById("end"),
+  repeat: document.getElementById("repeat"),
+  saveEventBtn: document.getElementById("saveEventBtn"),
+  eventButtonRow: document.getElementById("eventButtonRow"),
+  cancelEditBtn: document.getElementById("cancelEditBtn"),
+  clearDayBtn: document.getElementById("clearDayBtn"),
+  deleteEditingBtn: document.getElementById("deleteEditingBtn"),
+  newCategoryName: document.getElementById("newCategoryName"),
+  newCategoryColor: document.getElementById("newCategoryColor"),
+  addCategoryBtn: document.getElementById("addCategoryBtn"),
+  categoryList: document.getElementById("categoryList"),
+  searchInput: document.getElementById("searchInput"),
+  searchResults: document.getElementById("searchResults"),
+  sectionToggles: document.querySelectorAll("[data-toggle]"),
+  floatingAddBtn: document.getElementById("floatingAddBtn"),
+  dateTitle: document.getElementById("dateTitle"),
+  datePicker: document.getElementById("datePicker"),
+  prevDateBtn: document.getElementById("prevDateBtn"),
+  nextDateBtn: document.getElementById("nextDateBtn"),
+  todayBtn: document.getElementById("todayBtn"),
+  selectedDateText: document.getElementById("selectedDateText"),
+  dayViewBtn: document.getElementById("dayViewBtn"),
+  weekViewBtn: document.getElementById("weekViewBtn"),
+  monthViewBtn: document.getElementById("monthViewBtn"),
+  typeFilter: document.getElementById("typeFilter"),
+  eventCount: document.getElementById("eventCount"),
+  schedule: document.getElementById("schedule"),
+  eventModal: document.getElementById("eventModal"),
+  modalBackdrop: document.getElementById("modalBackdrop"),
+  closeEventModalBtn: document.getElementById("closeEventModalBtn"),
+  eventModalTitle: document.getElementById("eventModalTitle")
+};
+
+let appData = loadAppData();
+let selectedDate = getTodayString();
+let viewMode = "day";
+let editingEventId = null;
+
+function pad(num) {
+  return String(num).padStart(2, "0");
+}
+
+function escapeHTML(text) {
+  return String(text)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function formatDate(date) {
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+function getTodayString() {
+  return formatDate(new Date());
+}
+
+function parseDate(dateString) {
+  return new Date(`${dateString}T00:00:00`);
+}
+
+function addDays(dateString, amount) {
+  const date = parseDate(dateString);
+  date.setDate(date.getDate() + amount);
+  return formatDate(date);
+}
+
+function minutesToTime(minutes) {
+  const normalizedMinutes = minutes % (24 * 60);
+  const h = Math.floor(normalizedMinutes / 60);
+  const m = normalizedMinutes % 60;
+  return `${pad(h)}:${pad(m)}`;
+}
+
+function getKoreanDateLabel(dateString, short = false) {
+  const date = parseDate(dateString);
+  const days = ["일", "월", "화", "수", "목", "금", "토"];
+  if (short) return `${date.getMonth() + 1}/${date.getDate()} (${days[date.getDay()]})`;
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 (${days[date.getDay()]})`;
+}
+
+function getWeekDates(dateString) {
+  const date = parseDate(dateString);
+  const day = date.getDay();
+  const mondayOffset = day === 0 ? -6 : 1 - day;
+  const monday = new Date(date);
+  monday.setDate(date.getDate() + mondayOffset);
+
+  return Array.from({ length: 7 }, (_, index) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + index);
+    return formatDate(d);
+  });
+}
+
+function getMonthDates(dateString) {
+  const base = parseDate(dateString);
+  const firstDate = new Date(base.getFullYear(), base.getMonth(), 1);
+  const firstDay = firstDate.getDay();
+  const startDate = new Date(firstDate);
+  startDate.setDate(firstDate.getDate() - firstDay);
+
+  return Array.from({ length: 42 }, (_, index) => {
+    const date = new Date(startDate);
+    date.setDate(startDate.getDate() + index);
+    return formatDate(date);
+  });
+}
+
+function mergeCategories(savedCategories = []) {
+  const map = new Map();
+
+  [...savedCategories, ...defaultCategories].forEach(category => {
+    if (!category || !category.id) return;
+
+    map.set(category.id, {
+      id: category.id,
+      name: category.name || "이름 없음",
+      color: category.color || "#94a3b8",
+      protected: defaultCategories.some(item => item.id === category.id) || Boolean(category.protected)
+    });
+  });
+
+  return Array.from(map.values());
+}
+
+function loadAppData() {
+  const fallback = { categories: defaultCategories, events: [] };
+
+  try {
+    const saved = JSON.parse(localStorage.getItem(storageKey));
+    if (!saved) return fallback;
+
+    return {
+      categories: mergeCategories(saved.categories),
+      events: Array.isArray(saved.events) ? saved.events : []
+    };
+  } catch {
+    return fallback;
+  }
+}
+
+function saveAppData() {
+  localStorage.setItem(storageKey, JSON.stringify(appData));
+  renderSearchResults();
+}
+
+function createId(prefix) {
+  return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function getCategory(categoryId) {
+  return appData.categories.find(category => category.id === categoryId) || appData.categories[0];
+}
+
+function createTimeOptions() {
+  els.start.innerHTML = "";
+  els.end.innerHTML = "";
+
+  for (let minutes = startHour * 60; minutes <= endHour * 60; minutes += slotMinutes) {
+    const startOption = document.createElement("option");
+    startOption.value = minutes;
+    startOption.textContent = minutesToTime(minutes);
+    els.start.appendChild(startOption);
+
+    const endOption = document.createElement("option");
+    endOption.value = minutes;
+    endOption.textContent = minutesToTime(minutes);
+    els.end.appendChild(endOption);
+  }
+
+  els.start.value = 9 * 60;
+  els.end.value = 10 * 60;
+}
+
+function renderCategoryControls() {
+  const selectedCategory = els.categorySelect.value;
+  const selectedFilter = els.typeFilter.value;
+
+  const categoryOptions = appData.categories
+    .map(category => `<option value="${category.id}">${escapeHTML(category.name)}</option>`)
+    .join("");
+
+  els.categorySelect.innerHTML = categoryOptions;
+  els.typeFilter.innerHTML = `<option value="all">전체</option>${categoryOptions}`;
+
+  if (selectedCategory && appData.categories.some(category => category.id === selectedCategory)) {
+    els.categorySelect.value = selectedCategory;
+  }
+
+  if (selectedFilter === "all" || appData.categories.some(category => category.id === selectedFilter)) {
+    els.typeFilter.value = selectedFilter || "all";
+  }
+
+  els.categoryList.innerHTML = appData.categories.map(category => `
+    <div class="category-item">
+      <div class="category-left">
+        <span class="dot" style="background:${category.color}"></span>
+        <span>${escapeHTML(category.name)}</span>
+      </div>
+      ${category.protected
+        ? `<button class="category-delete-disabled" type="button" disabled>삭제</button>`
+        : `<button class="danger-btn" type="button" data-category-id="${category.id}">삭제</button>`}
+    </div>
+  `).join("");
+}
+
+function addCategory() {
+  const name = els.newCategoryName.value.trim();
+  const color = els.newCategoryColor.value;
+
+  if (!name) {
+    alert("종류 이름을 입력하세요.");
+    return;
+  }
+
+  if (appData.categories.some(category => category.name === name)) {
+    alert("이미 같은 이름의 종류가 있습니다.");
+    return;
+  }
+
+  appData.categories.push({
+    id: createId("category"),
+    name,
+    color,
+    protected: false
+  });
+
+  els.newCategoryName.value = "";
+  saveAppData();
+  renderAll();
+}
+
+function deleteCategory(categoryId) {
+  const category = getCategory(categoryId);
+  if (!category || category.protected) return;
+
+  const isUsed = appData.events.some(event => event.categoryId === categoryId);
+  if (isUsed) {
+    alert("이미 사용 중인 종류는 삭제할 수 없습니다. 해당 일정을 먼저 다른 종류로 수정하세요.");
+    return;
+  }
+
+  appData.categories = appData.categories.filter(item => item.id !== categoryId);
+  saveAppData();
+  renderAll();
+}
+
+function shouldShowRecurringEvent(event, dateString) {
+  if (!event.repeat || event.repeat === "none") return event.date === dateString;
+  if (dateString < event.date) return false;
+
+  const target = parseDate(dateString);
+  const original = parseDate(event.date);
+
+  if (event.repeat === "daily") return true;
+
+  if (event.repeat === "weekdays") {
+    const day = target.getDay();
+    return day >= 1 && day <= 5;
+  }
+
+  if (event.repeat === "weekly") {
+    return target.getDay() === original.getDay();
+  }
+
+  return false;
+}
+
+function getEventsForDate(dateString) {
+  return appData.events
+    .filter(event => shouldShowRecurringEvent(event, dateString))
+    .sort((a, b) => a.start - b.start);
+}
+
+function getVisibleEventsForDate(dateString) {
+  const events = getEventsForDate(dateString);
+  if (els.typeFilter.value === "all") return events;
+  return events.filter(event => event.categoryId === els.typeFilter.value);
+}
+
+function hasOverlap(dateString, newStart, newEnd, ignoreId = null) {
+  return getEventsForDate(dateString).some(event => {
+    if (event.id === ignoreId) return false;
+    return newStart < event.end && newEnd > event.start;
+  });
+}
+
+function getRepeatLabel(repeat) {
+  const labels = {
+    none: "반복 없음",
+    daily: "매일 반복",
+    weekly: "매주 반복",
+    weekdays: "평일 반복"
+  };
+
+  return labels[repeat] || "반복 없음";
+}
+
+function renderEvent(event, compact = false) {
+  const category = getCategory(event.categoryId);
+  const durationSlots = (event.end - event.start) / slotMinutes;
+  const height = Math.max(slotHeight - 8, durationSlots * slotHeight - 8);
+
+  return `
+    <div class="event" data-event-id="${event.id}" style="height:${height}px; background:${category.color};" title="${escapeHTML(event.title)}">
+      <div style="min-width:0;">
+        <div class="event-title">${escapeHTML(event.title)}</div>
+        <div class="event-time">${minutesToTime(event.start)} - ${minutesToTime(event.end)}${event.repeat && event.repeat !== "none" ? ` · ${getRepeatLabel(event.repeat)}` : ""}</div>
+        ${!compact && event.memo ? `<div class="event-memo">${escapeHTML(event.memo)}</div>` : ""}
+      </div>
+    </div>
+  `;
+}
+
+function renderDayView() {
+  els.schedule.className = "day-grid";
+  els.schedule.innerHTML = "";
+  const events = getVisibleEventsForDate(selectedDate);
+
+  for (let minutes = startHour * 60; minutes < endHour * 60; minutes += slotMinutes) {
+    const timeCell = document.createElement("div");
+    timeCell.className = "time-cell";
+    timeCell.textContent = minutesToTime(minutes);
+
+    const slot = document.createElement("div");
+    slot.className = "slot";
+    slot.dataset.time = minutes;
+    slot.dataset.date = selectedDate;
+
+    const event = events.find(item => item.start === minutes);
+    if (event) slot.innerHTML = renderEvent(event);
+
+    els.schedule.appendChild(timeCell);
+    els.schedule.appendChild(slot);
+  }
+}
+
+function renderWeekView() {
+  const weekDates = getWeekDates(selectedDate);
+  els.schedule.className = "week-grid";
+  els.schedule.innerHTML = `<div class="corner-cell">시간</div>`;
+
+  weekDates.forEach(date => {
+    els.schedule.innerHTML += `<div class="week-head">${getKoreanDateLabel(date, true)}</div>`;
+  });
+
+  for (let minutes = startHour * 60; minutes < endHour * 60; minutes += slotMinutes) {
+    els.schedule.innerHTML += `<div class="time-cell">${minutesToTime(minutes)}</div>`;
+
+    weekDates.forEach(date => {
+      const event = getVisibleEventsForDate(date).find(item => item.start === minutes);
+      els.schedule.innerHTML += `
+        <div class="slot" data-date="${date}" data-time="${minutes}">
+          ${event ? renderEvent(event, true) : ""}
+        </div>
+      `;
+    });
+  }
+}
+
+function renderMonthView() {
+  const base = parseDate(selectedDate);
+  const currentMonth = base.getMonth();
+  const today = getTodayString();
+  const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
+  const monthDates = getMonthDates(selectedDate);
+
+  els.schedule.className = "month-grid";
+  els.schedule.innerHTML = dayNames.map(day => `<div class="month-day-name">${day}</div>`).join("");
+
+  monthDates.forEach(date => {
+    const parsed = parseDate(date);
+    const events = getVisibleEventsForDate(date);
+    const isMuted = parsed.getMonth() !== currentMonth;
+    const isToday = date === today;
+    const visibleEvents = events.slice(0, 3);
+    const extraCount = Math.max(0, events.length - visibleEvents.length);
+
+    const eventList = visibleEvents.map(event => {
+      const category = getCategory(event.categoryId);
+      return `
+        <div class="month-event">
+          <span class="month-event-dot" style="background:${category.color}"></span>
+          <span class="month-event-title">${escapeHTML(event.title)}</span>
+        </div>
+      `;
+    }).join("");
+
+    const dots = events.slice(0, 6).map(event => {
+      const category = getCategory(event.categoryId);
+      return `<span class="month-dot" style="background:${category.color}"></span>`;
+    }).join("");
+
+    els.schedule.innerHTML += `
+      <div class="month-cell ${isMuted ? "muted" : ""} ${isToday ? "today" : ""}" data-date="${date}">
+        <div class="month-date">
+          <span>${parsed.getDate()}</span>
+          ${events.length ? `<span class="month-count">${events.length}개</span>` : ""}
+        </div>
+        <div class="month-events">
+          ${eventList}
+          ${extraCount ? `<div class="month-more">+${extraCount}개</div>` : ""}
+        </div>
+        <div class="month-dots">${dots}${events.length > 6 ? `<span class="month-more">+${events.length - 6}</span>` : ""}</div>
+      </div>
+    `;
+  });
+}
+
+function renderSchedule() {
+  if (viewMode === "day") renderDayView();
+  else if (viewMode === "week") renderWeekView();
+  else renderMonthView();
+
+  const allTodayEvents = getEventsForDate(selectedDate);
+  const visibleTodayEvents = getVisibleEventsForDate(selectedDate);
+
+  els.eventCount.textContent = els.typeFilter.value === "all"
+    ? `${allTodayEvents.length}개 일정`
+    : `${visibleTodayEvents.length}/${allTodayEvents.length}개 일정`;
+
+  const today = getTodayString();
+
+  if (viewMode === "day") {
+    els.dateTitle.textContent = selectedDate === today ? "오늘의 일정" : "선택한 날짜의 일정";
+    els.selectedDateText.textContent = getKoreanDateLabel(selectedDate);
+  } else if (viewMode === "week") {
+    els.dateTitle.textContent = "주간 일정";
+    els.selectedDateText.textContent = `${getKoreanDateLabel(getWeekDates(selectedDate)[0], true)} - ${getKoreanDateLabel(getWeekDates(selectedDate)[6], true)}`;
+  } else {
+    const date = parseDate(selectedDate);
+    els.dateTitle.textContent = "월간 일정";
+    els.selectedDateText.textContent = `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
+  }
+
+  els.dayViewBtn.classList.toggle("active", viewMode === "day");
+  els.weekViewBtn.classList.toggle("active", viewMode === "week");
+  els.monthViewBtn.classList.toggle("active", viewMode === "month");
+}
+
+function openEventModal(mode = "add") {
+  els.eventModal.classList.add("open");
+  els.eventModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  els.eventModalTitle.textContent = mode === "edit" ? "일정 수정" : "일정 추가";
+  setTimeout(() => els.title.focus(), 50);
+}
+
+function closeEventModal() {
+  els.eventModal.classList.remove("open");
+  els.eventModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+}
+
+function saveEvent() {
+  const title = els.title.value.trim();
+  const categoryId = els.categorySelect.value;
+  const memo = els.memo.value.trim();
+  const start = Number(els.start.value);
+  const end = Number(els.end.value);
+  const repeat = els.repeat.value;
+
+  if (!title) {
+    alert("일정 이름을 입력하세요.");
+    return;
+  }
+
+  if (start >= end) {
+    alert("종료 시간은 시작 시간보다 늦어야 합니다.");
+    return;
+  }
+
+  if (hasOverlap(selectedDate, start, end, editingEventId)) {
+    alert("이미 해당 시간대에 일정이 있습니다.");
+    return;
+  }
+
+  if (editingEventId) {
+    const target = appData.events.find(event => event.id === editingEventId);
+    if (!target) return;
+
+    Object.assign(target, {
+      title,
+      categoryId,
+      memo,
+      start,
+      end,
+      repeat,
+      date: selectedDate
+    });
+  } else {
+    appData.events.push({
+      id: createId("event"),
+      date: selectedDate,
+      title,
+      categoryId,
+      memo,
+      start,
+      end,
+      repeat
+    });
+  }
+
+  saveAppData();
+  resetForm();
+  closeEventModal();
+  renderAll();
+}
+
+function openSection(sectionName) {
+  document.querySelectorAll(".collapsible-section").forEach(section => {
+    const isTarget = section.dataset.section === sectionName;
+    section.classList.toggle("open", isTarget);
+
+    const icon = section.querySelector(".toggle-icon");
+    if (icon) icon.textContent = isTarget ? "−" : "+";
+  });
+}
+
+function toggleSection(sectionName) {
+  const section = document.querySelector(`.collapsible-section[data-section="${sectionName}"]`);
+  if (!section) return;
+
+  const willOpen = !section.classList.contains("open");
+
+  document.querySelectorAll(".collapsible-section").forEach(item => {
+    item.classList.remove("open");
+
+    const icon = item.querySelector(".toggle-icon");
+    if (icon) icon.textContent = "+";
+  });
+
+  if (willOpen) {
+    section.classList.add("open");
+
+    const icon = section.querySelector(".toggle-icon");
+    if (icon) icon.textContent = "−";
+  }
+}
+
+function startEditEvent(id) {
+  const event = appData.events.find(item => item.id === id);
+  if (!event) return;
+
+  editingEventId = id;
+  selectedDate = event.date;
+  els.datePicker.value = selectedDate;
+  els.title.value = event.title;
+  els.categorySelect.value = event.categoryId;
+  els.memo.value = event.memo || "";
+  els.start.value = event.start;
+  els.end.value = event.end;
+  els.repeat.value = event.repeat || "none";
+  els.saveEventBtn.textContent = "수정 저장하기";
+  els.cancelEditBtn.style.display = "block";
+  els.deleteEditingBtn.style.display = "block";
+  els.eventButtonRow.classList.add("editing");
+  openEventModal("edit");
+  renderSchedule();
+}
+
+function resetForm() {
+  editingEventId = null;
+  els.title.value = "";
+  els.memo.value = "";
+  els.categorySelect.value = appData.categories[0]?.id || "";
+  els.start.value = 9 * 60;
+  els.end.value = 10 * 60;
+  els.repeat.value = "none";
+  els.saveEventBtn.textContent = "추가하기";
+  els.cancelEditBtn.style.display = "none";
+  els.deleteEditingBtn.style.display = "none";
+  els.eventButtonRow.classList.remove("editing");
+  els.eventModalTitle.textContent = "일정 추가";
+}
+
+function deleteEvent(id) {
+  const event = appData.events.find(item => item.id === id);
+  if (!event) return;
+
+  const repeatMessage = event.repeat && event.repeat !== "none"
+    ? "반복 일정 전체를 삭제할까요?"
+    : "이 일정을 삭제할까요?";
+
+  if (!confirm(repeatMessage)) return;
+
+  appData.events = appData.events.filter(item => item.id !== id);
+  if (editingEventId === id) resetForm();
+  saveAppData();
+  closeEventModal();
+  renderAll();
+}
+
+function clearSelectedDate() {
+  const events = getEventsForDate(selectedDate);
+
+  if (events.length === 0) {
+    alert("삭제할 일정이 없습니다.");
+    return;
+  }
+
+  if (!confirm("이 날짜에 직접 등록된 일정을 모두 삭제할까요? 반복 일정은 시작 날짜가 이 날짜인 경우에만 삭제됩니다.")) return;
+
+  appData.events = appData.events.filter(event => event.date !== selectedDate);
+  resetForm();
+  closeEventModal();
+  saveAppData();
+  renderAll();
+}
+
+function renderSearchResults() {
+  const keyword = els.searchInput.value.trim().toLowerCase();
+
+  if (!keyword) {
+    els.searchResults.innerHTML = `<p class="empty-text">검색어를 입력하면 저장된 전체 일정에서 찾아줍니다.</p>`;
+    return;
+  }
+
+  const results = appData.events
+    .filter(event => {
+      const category = getCategory(event.categoryId);
+      const targetText = `${event.title} ${event.memo || ""} ${category?.name || ""}`.toLowerCase();
+      return targetText.includes(keyword);
+    })
+    .sort((a, b) => {
+      if (a.date !== b.date) return a.date.localeCompare(b.date);
+      return a.start - b.start;
+    });
+
+  if (results.length === 0) {
+    els.searchResults.innerHTML = `<p class="empty-text">검색 결과가 없습니다.</p>`;
+    return;
+  }
+
+  els.searchResults.innerHTML = results.map(event => {
+    const category = getCategory(event.categoryId);
+
+    return `
+      <div class="search-card" data-date="${event.date}" data-id="${event.id}">
+        <strong>${escapeHTML(event.title)}</strong>
+        <span>${getKoreanDateLabel(event.date)} · ${minutesToTime(event.start)} - ${minutesToTime(event.end)}</span>
+        <span>${escapeHTML(category.name)}${event.repeat && event.repeat !== "none" ? ` · ${getRepeatLabel(event.repeat)}` : ""}</span>
+        ${event.memo ? `<span>${escapeHTML(event.memo)}</span>` : ""}
+      </div>
+    `;
+  }).join("");
+}
+
+function changeDate(amount) {
+  resetForm();
+
+  if (viewMode === "month") {
+    const date = parseDate(selectedDate);
+    date.setMonth(date.getMonth() + amount);
+    selectedDate = formatDate(date);
+  } else {
+    selectedDate = addDays(selectedDate, viewMode === "week" ? amount * 7 : amount);
+  }
+
+  els.datePicker.value = selectedDate;
+  renderSchedule();
+}
+
+function closeAllSectionsOnMobile() {
+  if (!window.matchMedia("(max-width: 900px)").matches) return;
+
+  document.querySelectorAll(".collapsible-section").forEach(section => {
+    section.classList.remove("open");
+
+    const icon = section.querySelector(".toggle-icon");
+    if (icon) icon.textContent = "+";
+  });
+}
+
+function renderAll() {
+  renderCategoryControls();
+  renderSchedule();
+  renderSearchResults();
+}
+
+function registerServiceWorker() {
+  if (!("serviceWorker" in navigator)) return;
+
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("service-worker.js").catch(error => {
+      console.log("Service Worker registration failed:", error);
+    });
+  });
+}
+
+els.sectionToggles.forEach(button => {
+  button.addEventListener("click", () => toggleSection(button.dataset.toggle));
+});
+
+els.floatingAddBtn.addEventListener("click", () => {
+  resetForm();
+  openEventModal("add");
+});
+
+els.closeEventModalBtn.addEventListener("click", () => {
+  resetForm();
+  closeEventModal();
+});
+
+els.modalBackdrop.addEventListener("click", () => {
+  resetForm();
+  closeEventModal();
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && els.eventModal.classList.contains("open")) {
+    resetForm();
+    closeEventModal();
+  }
+});
+
+els.saveEventBtn.addEventListener("click", saveEvent);
+
+els.cancelEditBtn.addEventListener("click", () => {
+  resetForm();
+  closeEventModal();
+});
+
+els.clearDayBtn.addEventListener("click", clearSelectedDate);
+
+els.deleteEditingBtn.addEventListener("click", () => {
+  if (!editingEventId) return;
+  deleteEvent(editingEventId);
+});
+
+els.addCategoryBtn.addEventListener("click", addCategory);
+
+els.categoryList.addEventListener("click", event => {
+  const button = event.target.closest("button[data-category-id]");
+  if (!button) return;
+  deleteCategory(button.dataset.categoryId);
+});
+
+els.searchInput.addEventListener("input", renderSearchResults);
+
+els.searchResults.addEventListener("click", event => {
+  const card = event.target.closest(".search-card");
+  if (!card) return;
+
+  selectedDate = card.dataset.date;
+  els.datePicker.value = selectedDate;
+  viewMode = "day";
+  resetForm();
+  closeEventModal();
+  renderSchedule();
+});
+
+els.schedule.addEventListener("click", event => {
+  const monthCell = event.target.closest(".month-cell[data-date]");
+  if (monthCell) {
+    selectedDate = monthCell.dataset.date;
+    els.datePicker.value = selectedDate;
+    viewMode = "day";
+    resetForm();
+    closeEventModal();
+    renderSchedule();
+    return;
+  }
+
+  const eventCard = event.target.closest(".event[data-event-id]");
+  if (!eventCard) return;
+  startEditEvent(eventCard.dataset.eventId);
+});
+
+els.datePicker.addEventListener("change", event => {
+  selectedDate = event.target.value;
+  resetForm();
+  closeEventModal();
+  renderSchedule();
+});
+
+els.prevDateBtn.addEventListener("click", () => changeDate(-1));
+els.nextDateBtn.addEventListener("click", () => changeDate(1));
+
+els.todayBtn.addEventListener("click", () => {
+  selectedDate = getTodayString();
+  els.datePicker.value = selectedDate;
+  resetForm();
+  closeEventModal();
+  renderSchedule();
+});
+
+els.dayViewBtn.addEventListener("click", () => {
+  viewMode = "day";
+  renderSchedule();
+});
+
+els.weekViewBtn.addEventListener("click", () => {
+  viewMode = "week";
+  renderSchedule();
+});
+
+els.monthViewBtn.addEventListener("click", () => {
+  viewMode = "month";
+  renderSchedule();
+});
+
+els.typeFilter.addEventListener("change", renderSchedule);
+
+createTimeOptions();
+els.datePicker.value = selectedDate;
+renderAll();
+closeAllSectionsOnMobile();
+registerServiceWorker();
