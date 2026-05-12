@@ -1,7 +1,7 @@
 {
-  "name": "데이플랜 v15",
-  "short_name": "데이플랜 v15",
-  "description": "데이플랜 v15 - 피드백 1차 반영본",
+  "name": "데이플랜 v16",
+  "short_name": "데이플랜 v16",
+  "description": "데이플랜 v16 - 피드백 2차 반영본",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#111827",
