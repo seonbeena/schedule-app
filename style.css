@@ -1952,7 +1952,7 @@ select {
 #end,
 #repeat,
 #typeFilter {
-  font-size: 16px !important;
+  font-size: 14px !important;
 }
 
 /* Slightly reduce padding so 16px controls do not feel too bulky */
