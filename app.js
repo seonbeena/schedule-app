@@ -354,7 +354,17 @@ function renderDayView() {
     timelineColumn.appendChild(block);
   });
 
+  const nowMarker = document.createElement("div");
+  nowMarker.id = "nowMarker";
+  nowMarker.className = "now-marker";
+  nowMarker.innerHTML = `
+    <div id="nowTimeLabel" class="now-time-label"></div>
+    <div class="now-line"></div>
+  `;
+  timelineColumn.appendChild(nowMarker);
+
   els.schedule.append(timeColumn, timelineColumn);
+  updateCurrentTimeMarker();
 }
 
 function renderWeekView() {
@@ -449,6 +459,58 @@ function renderSummary() {
   `;
 }
 
+
+function getNowMinutesForDayPlan() {
+  const now = new Date();
+  let minutes = now.getHours() * 60 + now.getMinutes();
+
+  if (minutes < 2 * 60) {
+    minutes += 24 * 60;
+  }
+
+  return minutes;
+}
+
+function isNowVisibleInTimetable() {
+  if (viewMode !== "day") return false;
+  if (selectedDate !== getTodayString()) return false;
+
+  const minutes = getNowMinutesForDayPlan();
+  return minutes >= startHour * 60 && minutes <= endHour * 60;
+}
+
+function updateCurrentTimeMarker() {
+  const marker = document.getElementById("nowMarker");
+  const label = document.getElementById("nowTimeLabel");
+
+  if (!marker || !label) return;
+
+  if (!isNowVisibleInTimetable()) {
+    marker.style.display = "none";
+    return;
+  }
+
+  const now = new Date();
+  const minutes = getNowMinutesForDayPlan();
+  const offset = ((minutes - startHour * 60) / slotMinutes) * 38;
+
+  marker.style.display = "block";
+  marker.style.top = `${offset}px`;
+  label.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+}
+
+function scrollToCurrentTimeOnOpen() {
+  if (!isNowVisibleInTimetable()) return;
+
+  const minutes = getNowMinutesForDayPlan();
+  const offset = ((minutes - startHour * 60) / slotMinutes) * 38;
+  const target = Math.max(0, offset - 90);
+
+  requestAnimationFrame(() => {
+    els.schedule.scrollTop = target;
+  });
+}
+
 function renderSchedule() {
   updateDateLabel();
   updateTodayButton();
@@ -473,6 +535,7 @@ function renderSchedule() {
   els.dayViewBtn.classList.toggle("active", viewMode === "day");
   els.weekViewBtn.classList.toggle("active", viewMode === "week");
   els.monthViewBtn.classList.toggle("active", viewMode === "month");
+  updateCurrentTimeMarker();
 }
 
 function renderSearchResults() {
@@ -877,4 +940,6 @@ els.datePicker.value = selectedDate;
 els.eventDate.value = selectedDate;
 updateEventDateLabel();
 renderAll();
+scrollToCurrentTimeOnOpen();
+setInterval(updateCurrentTimeMarker, 60000);
 registerServiceWorker();
