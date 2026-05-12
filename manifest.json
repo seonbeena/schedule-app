@@ -1,7 +1,7 @@
 {
   "name": "일정표",
   "short_name": "일정표",
-  "description": "날짜별·주간·월간 일정, 반복 일정, 카테고리 색상, 검색을 관리할 수 있는 일정표입니다.",
+  "description": "날짜별·주간·월간 일정, 반복 일정, 직접 추가한 카테고리 색상, 검색을 관리할 수 있는 일정표입니다.",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f4f6f8",

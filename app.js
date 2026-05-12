@@ -2,15 +2,9 @@ const startHour = 6;
 const endHour = 26;
 const slotMinutes = 30;
 const slotHeight = 42;
-const storageKey = "date-schedule-app-v4";
+const storageKey = "date-schedule-app-v5";
 
-const defaultCategories = [
-  { id: "study", name: "공부", color: "#93c5fd", protected: true },
-  { id: "class", name: "수업", color: "#c4b5fd", protected: true },
-  { id: "work", name: "업무", color: "#fdba74", protected: true },
-  { id: "rest", name: "휴식", color: "#86efac", protected: true },
-  { id: "etc", name: "기타", color: "#94a3b8", protected: true }
-];
+const defaultCategories = [];
 
 const els = {
   title: document.getElementById("title"),
@@ -171,7 +165,12 @@ function createId(prefix) {
 }
 
 function getCategory(categoryId) {
-  return appData.categories.find(category => category.id === categoryId) || appData.categories[0];
+  return appData.categories.find(category => category.id === categoryId) || {
+    id: "uncategorized",
+    name: "종류 없음",
+    color: "#cbd5e1",
+    protected: true
+  };
 }
 
 function createTimeOptions() {
@@ -203,6 +202,8 @@ function renderCategoryControls() {
     .join("");
 
   els.categorySelect.innerHTML = categoryOptions;
+  els.categorySelect.disabled = appData.categories.length === 0;
+
   els.typeFilter.innerHTML = `<option value="all">전체</option>${categoryOptions}`;
 
   if (selectedCategory && appData.categories.some(category => category.id === selectedCategory)) {
@@ -213,15 +214,18 @@ function renderCategoryControls() {
     els.typeFilter.value = selectedFilter || "all";
   }
 
+  if (appData.categories.length === 0) {
+    els.categoryList.innerHTML = `<p class="empty-text">아직 추가된 일정 종류가 없습니다.</p>`;
+    return;
+  }
+
   els.categoryList.innerHTML = appData.categories.map(category => `
     <div class="category-item">
       <div class="category-left">
         <span class="dot" style="background:${category.color}"></span>
         <span>${escapeHTML(category.name)}</span>
       </div>
-      ${category.protected
-        ? `<button class="category-delete-disabled" type="button" disabled>삭제</button>`
-        : `<button class="danger-btn" type="button" data-category-id="${category.id}">삭제</button>`}
+      <button class="danger-btn" type="button" data-category-id="${category.id}">삭제</button>
     </div>
   `).join("");
 }
@@ -487,6 +491,11 @@ function saveEvent() {
     return;
   }
 
+  if (appData.categories.length === 0 || !categoryId) {
+    alert("먼저 일정 종류를 추가하세요.");
+    return;
+  }
+
   if (start >= end) {
     alert("종료 시간은 시작 시간보다 늦어야 합니다.");
     return;
@@ -585,7 +594,9 @@ function resetForm() {
   editingEventId = null;
   els.title.value = "";
   els.memo.value = "";
-  els.categorySelect.value = appData.categories[0]?.id || "";
+  if (appData.categories.length > 0) {
+    els.categorySelect.value = appData.categories[0].id;
+  }
   els.start.value = 9 * 60;
   els.end.value = 10 * 60;
   els.repeat.value = "none";

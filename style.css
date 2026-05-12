@@ -14,6 +14,13 @@
   --slot-height: 42px;
 }
 
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -262,6 +269,7 @@ button:hover {
 .schedule-wrap {
   overflow: hidden;
   min-width: 0;
+  max-width: 100%;
 }
 
 .schedule-header {
@@ -289,6 +297,7 @@ button:hover {
 
 .date-controls input {
   width: 160px;
+  min-width: 0;
 }
 
 .date-controls button,
@@ -310,11 +319,15 @@ button:hover {
   color: var(--muted);
   font-size: 14px;
   flex-wrap: wrap;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .selected-date-wrap {
   min-width: 0;
   max-width: 100%;
+  overflow: hidden;
 }
 
 #selectedDateText {
@@ -873,13 +886,16 @@ button:hover {
 
   .date-controls {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 6px;
     justify-content: stretch;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .date-controls input {
     width: 100%;
+    min-width: 0;
     grid-column: 1 / -1;
     order: -1;
   }
@@ -899,21 +915,31 @@ button:hover {
 
   .schedule-subheader {
     display: grid;
-    grid-template-columns: 1fr;
-    padding: 7px 9px;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 7px 8px;
     gap: 6px;
     position: sticky;
     top: 58px;
     z-index: 90;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
   }
 
   .selected-date-wrap {
     min-width: 0;
     max-width: 100%;
+    width: 100%;
+    overflow: hidden;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 9px;
+    padding: 5px 8px;
   }
 
   #selectedDateText {
     display: block;
+    max-width: 100%;
     font-size: 12px;
     line-height: 1.25;
     white-space: nowrap;
@@ -923,9 +949,11 @@ button:hover {
 
   .view-controls {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
     gap: 0;
     justify-content: stretch;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .segmented-control {
@@ -941,6 +969,8 @@ button:hover {
     align-items: center;
     font-size: 12px;
     min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
   }
 
   .filter-area label {
@@ -1121,8 +1151,8 @@ button:hover {
 
   .schedule-subheader {
     top: 52px;
-    padding-left: 9px;
-    padding-right: 9px;
+    padding-left: 7px;
+    padding-right: 7px;
   }
 
   .date-controls {
