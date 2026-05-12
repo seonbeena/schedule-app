@@ -1928,3 +1928,56 @@ select,
 .category-item {
   touch-action: manipulation;
 }
+
+
+/* iOS Safari input-focus zoom fix */
+input,
+select,
+textarea {
+  font-size: 16px !important;
+}
+
+/* Keep compact visual height while using 16px text */
+input,
+select {
+  min-height: 34px;
+}
+
+.event-sheet input,
+.event-sheet select,
+#newCategoryName,
+#searchInput,
+#categorySelect,
+#start,
+#end,
+#repeat,
+#typeFilter {
+  font-size: 16px !important;
+}
+
+/* Slightly reduce padding so 16px controls do not feel too bulky */
+.event-sheet input,
+.event-sheet select {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+@media (max-width: 900px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  .event-sheet input,
+  .event-sheet select,
+  #newCategoryName,
+  #searchInput,
+  #categorySelect,
+  #start,
+  #end,
+  #repeat,
+  #typeFilter {
+    font-size: 16px !important;
+  }
+}

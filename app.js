@@ -16,7 +16,6 @@ const els = {
   saveEventBtn: document.getElementById("saveEventBtn"),
   eventButtonRow: document.getElementById("eventButtonRow"),
   cancelEditBtn: document.getElementById("cancelEditBtn"),
-  clearDayBtn: document.getElementById("clearDayBtn"),
   deleteEditingBtn: document.getElementById("deleteEditingBtn"),
   newCategoryName: document.getElementById("newCategoryName"),
   newCategoryColor: document.getElementById("newCategoryColor"),
@@ -776,8 +775,6 @@ els.cancelEditBtn.addEventListener("click", () => {
   resetForm();
   closeEventModal();
 });
-
-els.clearDayBtn.addEventListener("click", clearSelectedDate);
 
 els.deleteEditingBtn.addEventListener("click", () => {
   if (!editingEventId) return;
