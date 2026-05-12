@@ -1682,3 +1682,74 @@ select {
   border-radius: 999px;
   box-shadow: 0 0 6px rgba(239, 68, 68, 0.22);
 }
+
+
+/* now v2: show current-time capsule inside left time axis */
+.timeline-column {
+  overflow: visible !important;
+}
+
+.timeline-grid {
+  overflow: visible !important;
+}
+
+.now-marker {
+  z-index: 20 !important;
+}
+
+.now-time-label {
+  z-index: 21 !important;
+}
+
+
+/* final now release: safe current-time overlay */
+.schedule-scroll {
+  position: relative;
+}
+
+.timeline-column {
+  overflow: hidden !important;
+}
+
+.timeline-grid {
+  overflow-x: hidden !important;
+  overflow-y: auto;
+}
+
+.now-marker {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.now-time-label {
+  position: absolute;
+  left: 2px;
+  top: 50%;
+  width: 38px;
+  height: 18px;
+  transform: translateY(-50%);
+  border-radius: 999px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 18px;
+  text-align: center;
+  letter-spacing: -0.05em;
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.32);
+}
+
+.now-line {
+  position: absolute;
+  left: 42px;
+  right: 0;
+  top: 0;
+  height: 1.5px;
+  background: rgba(239, 68, 68, 0.9);
+  border-radius: 999px;
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.22);
+}

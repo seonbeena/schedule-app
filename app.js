@@ -354,6 +354,8 @@ function renderDayView() {
     timelineColumn.appendChild(block);
   });
 
+  els.schedule.append(timeColumn, timelineColumn);
+
   const nowMarker = document.createElement("div");
   nowMarker.id = "nowMarker";
   nowMarker.className = "now-marker";
@@ -361,9 +363,8 @@ function renderDayView() {
     <div id="nowTimeLabel" class="now-time-label"></div>
     <div class="now-line"></div>
   `;
-  timelineColumn.appendChild(nowMarker);
+  els.schedule.appendChild(nowMarker);
 
-  els.schedule.append(timeColumn, timelineColumn);
   updateCurrentTimeMarker();
 }
 
