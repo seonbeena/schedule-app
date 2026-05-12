@@ -422,32 +422,31 @@ function renderSummary() {
   const unscheduled = events.filter(event => event.isUnscheduled);
   const timed = events.filter(event => !event.isUnscheduled);
 
-  els.summaryCount.textContent = `${events.length}개`;
+  els.summaryCount.textContent = `${unscheduled.length}개`;
 
-  if (events.length === 0) {
-    els.summaryPreview.textContent = "일정 없음";
-    els.summaryDetail.innerHTML = `<p class="empty-text">이 날짜에 표시할 일정이 없습니다.</p>`;
+  if (unscheduled.length === 0) {
+    els.summaryPreview.innerHTML = `<span class="summary-preview-line">시간 미정 일정 없음</span>`;
+  } else {
+    const visibleUnscheduled = unscheduled.slice(0, 3);
+    const hiddenCount = Math.max(0, unscheduled.length - visibleUnscheduled.length);
+
+    els.summaryPreview.innerHTML = visibleUnscheduled.map((event, index) => {
+      const suffix = hiddenCount > 0 && index === visibleUnscheduled.length - 1
+        ? ` 외 ${hiddenCount}개`
+        : "";
+      return `<span class="summary-preview-line">• ${escapeHTML(event.title)}${suffix}</span>`;
+    }).join("");
+  }
+
+  if (timed.length === 0) {
+    els.summaryDetail.innerHTML = `<p class="empty-text">시간 일정이 없습니다.</p>`;
     return;
   }
 
-  const previewItems = [];
-  if (unscheduled.length) previewItems.push(`시간미정 ${unscheduled.length}개`);
-  previewItems.push(...timed.slice(0, 2).map(event => `${minutesToTime(event.start)} ${event.title}`));
-
-  const hiddenCount = Math.max(0, events.length - previewItems.length);
-  els.summaryPreview.textContent = hiddenCount > 0
-    ? `${previewItems.join(" · ")} 외 ${hiddenCount}개`
-    : previewItems.join(" · ");
-
-  const unscheduledHTML = unscheduled.length
-    ? `<div class="summary-section-title">시간 미정</div>${unscheduled.map(event => `<div>• ${escapeHTML(event.title)}</div>`).join("")}`
-    : "";
-
-  const timedHTML = timed.length
-    ? `<div class="summary-section-title">시간 일정</div>${timed.map(event => `<div>• ${minutesToTime(event.start)} ${escapeHTML(event.title)}</div>`).join("")}`
-    : "";
-
-  els.summaryDetail.innerHTML = `${unscheduledHTML}${timedHTML}`;
+  els.summaryDetail.innerHTML = `
+    <div class="summary-section-title">시간 일정</div>
+    ${timed.map(event => `<div>• ${minutesToTime(event.start)} ${escapeHTML(event.title)}</div>`).join("")}
+  `;
 }
 
 function renderSchedule() {

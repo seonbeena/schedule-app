@@ -1601,3 +1601,31 @@ select {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
+
+/* mobile clean v11: unscheduled-first daily summary */
+.summary-toggle {
+  gap: 6px 8px;
+}
+
+.summary-preview {
+  display: grid;
+  gap: 2px;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+.summary-preview-line {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.summary-detail {
+  border-top: 1px solid rgba(51, 65, 85, 0.65);
+  margin-top: 2px;
+  padding-top: 7px;
+}
