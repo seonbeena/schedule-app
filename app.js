@@ -306,12 +306,8 @@ function renderCategories() {
 }
 
 function renderEventBlock(event) {
-  const category = getCategory(event.categoryId);
-  const slots = Math.max(1, (event.end - event.start) / slotMinutes);
-  const height = slots * 38 - 6;
-
   return `
-    <div class="event" data-event-id="${event.id}" style="height:${height}px; background:${category.color};">
+    <div class="event event-start-content" data-event-id="${event.id}">
       <div class="event-title">${escapeHTML(event.title)}</div>
       <div class="event-time">${minutesToTime(event.start)} - ${minutesToTime(event.end)}</div>
       ${event.memo ? `<div class="event-memo">${escapeHTML(event.memo)}</div>` : ""}
@@ -333,8 +329,25 @@ function renderDayView() {
     slot.className = "slot";
     slot.dataset.time = String(minutes);
 
-    const event = events.find(item => item.start === minutes);
-    if (event) slot.innerHTML = renderEventBlock(event);
+    const occupyingEvent = events.find(item => item.start <= minutes && item.end > minutes);
+
+    if (occupyingEvent) {
+      const category = getCategory(occupyingEvent.categoryId);
+      slot.dataset.eventId = occupyingEvent.id;
+      slot.classList.add("event-slot");
+      slot.style.background = category.color;
+
+      if (minutes === occupyingEvent.start) {
+        slot.classList.add("event-start");
+        slot.innerHTML = renderEventBlock(occupyingEvent);
+      } else {
+        slot.classList.add("event-continuation");
+      }
+
+      if (minutes + slotMinutes >= occupyingEvent.end) {
+        slot.classList.add("event-end");
+      }
+    }
 
     els.schedule.append(timeCell, slot);
   }
