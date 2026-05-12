@@ -824,3 +824,32 @@ label {
   padding-left: 2px;
   padding-right: 3px;
 }
+
+
+/* mobile clean v4: unify text size inside event modal fields */
+.event-sheet input,
+.event-sheet select,
+.modal-date-field,
+#eventDateLabel {
+  font-size: 15px !important;
+  font-weight: 800;
+}
+
+.event-sheet input,
+.event-sheet select {
+  line-height: 20px !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+}
+
+.event-sheet select {
+  text-align: left;
+  text-align-last: left;
+}
+
+#eventDateLabel {
+  line-height: 1 !important;
+}
