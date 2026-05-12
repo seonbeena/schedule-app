@@ -1753,3 +1753,10 @@ select {
   border-radius: 999px;
   box-shadow: 0 0 6px rgba(239, 68, 68, 0.22);
 }
+
+
+/* final now hide time: hide the underlying time label covered by the current-time capsule */
+.time-cell.now-covered {
+  color: transparent !important;
+  text-shadow: none !important;
+}

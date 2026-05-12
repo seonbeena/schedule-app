@@ -329,6 +329,7 @@ function renderDayView() {
   for (let minutes = startHour * 60; minutes < endHour * 60; minutes += slotMinutes) {
     const timeCell = document.createElement("div");
     timeCell.className = "time-cell";
+    timeCell.dataset.time = String(minutes);
     timeCell.textContent = minutesToTime(minutes);
     timeColumn.appendChild(timeCell);
 
@@ -484,6 +485,10 @@ function updateCurrentTimeMarker() {
   const marker = document.getElementById("nowMarker");
   const label = document.getElementById("nowTimeLabel");
 
+  document.querySelectorAll(".time-cell.now-covered").forEach(cell => {
+    cell.classList.remove("now-covered");
+  });
+
   if (!marker || !label) return;
 
   if (!isNowVisibleInTimetable()) {
@@ -494,6 +499,12 @@ function updateCurrentTimeMarker() {
   const now = new Date();
   const minutes = getNowMinutesForDayPlan();
   const offset = ((minutes - startHour * 60) / slotMinutes) * 38;
+  const coveredSlot = Math.floor(minutes / slotMinutes) * slotMinutes;
+  const coveredCell = document.querySelector(`.time-cell[data-time="${coveredSlot}"]`);
+
+  if (coveredCell) {
+    coveredCell.classList.add("now-covered");
+  }
 
   marker.style.display = "block";
   marker.style.top = `${offset}px`;
