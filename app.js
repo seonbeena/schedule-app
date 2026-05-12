@@ -533,6 +533,18 @@ function deleteCategory(id) {
   renderAll();
 }
 
+
+function closeSettingsModal() {
+  if (!els.settingsModal) return;
+  els.settingsModal.classList.remove("open");
+  els.settingsModal.setAttribute("aria-hidden", "true");
+  els.settingsModal.querySelectorAll(".settings-section.open").forEach(section => {
+    section.classList.remove("open");
+    const icon = section.querySelector(".toggle-icon");
+    if (icon) icon.textContent = "+";
+  });
+}
+
 function openEventModal(mode = "add") {
   els.eventModal.classList.add("open");
   els.eventModal.setAttribute("aria-hidden", "false");
@@ -706,17 +718,11 @@ if (els.settingsBtn) {
 }
 
 if (els.settingsCloseBtn) {
-  els.settingsCloseBtn.addEventListener("click", () => {
-    els.settingsModal.classList.remove("open");
-    els.settingsModal.setAttribute("aria-hidden", "true");
-  });
+  els.settingsCloseBtn.addEventListener("click", closeSettingsModal);
 }
 
 if (els.settingsBackdrop) {
-  els.settingsBackdrop.addEventListener("click", () => {
-    els.settingsModal.classList.remove("open");
-    els.settingsModal.setAttribute("aria-hidden", "true");
-  });
+  els.settingsBackdrop.addEventListener("click", closeSettingsModal);
 }
 
 if (els.summaryToggle) {
@@ -734,17 +740,22 @@ if (els.isUnscheduled) {
 
 els.sectionToggles.forEach(button => {
   button.addEventListener("click", () => {
-    const section = document.querySelector(`[data-section="${button.dataset.toggle}"]`);
-    const willOpen = !section.classList.contains("open");
+    const section = button.closest(".tool-section, .settings-section");
+    if (!section) return;
 
-    document.querySelectorAll(".tool-section").forEach(item => {
+    const icon = button.querySelector(".toggle-icon");
+    const isCurrentlyOpen = section.classList.contains("open");
+
+    const scope = section.closest("#settingsModal") || document;
+    scope.querySelectorAll(".tool-section.open, .settings-section.open").forEach(item => {
       item.classList.remove("open");
-      item.querySelector(".toggle-icon").textContent = "+";
+      const itemIcon = item.querySelector(".toggle-icon");
+      if (itemIcon) itemIcon.textContent = "+";
     });
 
-    if (willOpen) {
+    if (!isCurrentlyOpen) {
       section.classList.add("open");
-      section.querySelector(".toggle-icon").textContent = "−";
+      if (icon) icon.textContent = "−";
     }
   });
 });

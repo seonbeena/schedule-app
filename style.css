@@ -1102,3 +1102,120 @@ header {
 .floating-add-btn {
   bottom: 14px;
 }
+
+
+/* mobile clean v6: compact settings modal controls */
+.settings-sheet {
+  width: min(340px, calc(100vw - 36px));
+  max-width: calc(100vw - 36px);
+}
+
+.settings-list {
+  gap: 8px;
+}
+
+.settings-section {
+  border: 1px solid #334155;
+  border-radius: 12px;
+  background: #111827;
+  overflow: hidden;
+}
+
+.settings-section .section-toggle {
+  min-height: 34px;
+  padding: 7px 9px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.settings-section .section-content {
+  padding: 8px;
+}
+
+.settings-section label {
+  margin: 0 0 4px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.settings-section .category-input-row {
+  grid-template-columns: minmax(0, 1fr) 42px;
+  gap: 6px;
+  margin-bottom: 7px;
+}
+
+.settings-section input,
+.settings-section select {
+  height: 28px;
+  min-height: 28px;
+  max-height: 28px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 7px;
+}
+
+.settings-section input[type="color"] {
+  padding: 2px;
+}
+
+.settings-section #addCategoryBtn {
+  min-height: 28px;
+  margin-top: 0;
+  margin-bottom: 7px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.settings-section .list-area {
+  gap: 5px;
+  margin-top: 7px;
+}
+
+.settings-section .category-item {
+  min-height: 28px;
+  padding: 4px 6px;
+  border-radius: 8px;
+  gap: 6px;
+}
+
+.settings-section .category-left {
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.settings-section .dot {
+  width: 8px;
+  height: 8px;
+}
+
+.settings-section .category-delete-btn {
+  min-height: 22px;
+  padding: 2px 7px;
+  border-radius: 7px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.settings-section .search-card {
+  padding: 6px 7px;
+  border-radius: 8px;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.settings-section .search-card strong {
+  font-size: 11px;
+}
+
+.settings-section .search-card span,
+.settings-section .empty-text {
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+/* Keep the settings modal from visually filling the whole screen when lists grow */
+.settings-sheet {
+  max-height: min(74vh, 520px);
+}
