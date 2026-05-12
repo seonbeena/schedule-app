@@ -1408,3 +1408,89 @@ select {
   height: 100%;
   width: 100%;
 }
+
+
+/* mobile clean v9: make multi-slot events look like one continuous block */
+.slot.event-slot {
+  position: relative;
+  overflow: visible;
+  background: #1f2937 !important;
+  border-bottom-color: transparent !important;
+  cursor: pointer;
+}
+
+.slot.event-slot::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  top: -1px;
+  bottom: -1px;
+  background: var(--event-color);
+  z-index: 0;
+}
+
+.slot.event-start::before {
+  top: 3px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.slot.event-end::before {
+  bottom: 3px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.slot.event-start.event-end::before {
+  top: 3px;
+  bottom: 3px;
+  border-radius: 8px;
+}
+
+.slot.event-end {
+  margin-bottom: 0 !important;
+}
+
+.event.event-start-content {
+  position: relative !important;
+  z-index: 1;
+  margin: 0;
+  padding: 6px 7px 3px;
+  border-radius: 0;
+  background: transparent !important;
+  color: #1f2937;
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.event-start-content .event-title {
+  font-size: 11px;
+  line-height: 1.15;
+  font-weight: 900;
+}
+
+.event-start-content .event-time {
+  margin-top: 2px;
+  font-size: 10px;
+  line-height: 1.15;
+  font-weight: 800;
+  opacity: 0.82;
+}
+
+.event-start-content .event-memo {
+  margin-top: 2px;
+  font-size: 10px;
+  line-height: 1.15;
+  opacity: 0.78;
+}
+
+.slot.event-continuation::before {
+  display: block;
+}
+
+/* Keep the left time ruler lines visible while the event block itself appears merged */
+.time-cell {
+  border-bottom-color: #334155;
+}

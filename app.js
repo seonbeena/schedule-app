@@ -335,7 +335,7 @@ function renderDayView() {
       const category = getCategory(occupyingEvent.categoryId);
       slot.dataset.eventId = occupyingEvent.id;
       slot.classList.add("event-slot");
-      slot.style.background = category.color;
+      slot.style.setProperty("--event-color", category.color);
 
       if (minutes === occupyingEvent.start) {
         slot.classList.add("event-start");
