@@ -117,7 +117,7 @@ function updateDatePickerLabel() {
 
 function updateTodayButton() {
   if (!els.todayBtn) return;
-  els.todayBtn.classList.toggle("show", selectedDate !== getTodayString());
+  els.todayBtn.classList.toggle("is-hidden", selectedDate === getTodayString());
 }
 
 function getWeekDates(dateString) {
@@ -478,14 +478,14 @@ function renderSchedule() {
 
   if (viewMode === "day") {
     els.dateTitle.textContent = "일간 일정";
-    if (els.selectedDateText) els.selectedDateText.textContent = getKoreanDateLabel(selectedDate);
+    if (els.selectedDateText) if (els.selectedDateText) els.selectedDateText.textContent = getKoreanDateLabel(selectedDate);
   } else if (viewMode === "week") {
     els.dateTitle.textContent = "주간 일정";
-    if (els.selectedDateText) els.selectedDateText.textContent = `${getKoreanDateLabel(getWeekDates(selectedDate)[0], true)} - ${getKoreanDateLabel(getWeekDates(selectedDate)[6], true)}`;
+    if (els.selectedDateText) if (els.selectedDateText) els.selectedDateText.textContent = `${getKoreanDateLabel(getWeekDates(selectedDate)[0], true)} - ${getKoreanDateLabel(getWeekDates(selectedDate)[6], true)}`;
   } else {
     const date = parseDate(selectedDate);
     els.dateTitle.textContent = "월간 일정";
-    if (els.selectedDateText) els.selectedDateText.textContent = `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
+    if (els.selectedDateText) if (els.selectedDateText) els.selectedDateText.textContent = `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
   }
 
   els.dayViewBtn.classList.toggle("active", viewMode === "day");

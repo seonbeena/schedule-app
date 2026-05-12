@@ -2022,111 +2022,130 @@ select {
 }
 
 
-/* feedback step 1: compact date navigation + add-date modal + natural mobile scroll */
-.compact-date-controls {
-  display: grid !important;
-  grid-template-columns: 34px minmax(0, 1fr) 34px !important;
-  gap: 7px !important;
+/* UI preview applied: stable top nav + modal overflow fix */
+.schedule-header {
+  padding: 11px 11px 9px 13px !important;
+}
+
+.schedule-title-row {
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 7px 4px;
 }
 
-.compact-date-controls .date-picker-shell {
-  grid-column: auto !important;
+.schedule-title-row h2,
+.schedule-header h2 {
+  margin: 0 !important;
+  font-size: 15px !important;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
 }
 
-.date-arrow-btn {
-  width: 34px !important;
-  min-width: 34px !important;
-  height: 32px !important;
-  min-height: 32px !important;
-  padding: 0 !important;
-  border-radius: 999px !important;
-  font-size: 22px !important;
-  line-height: 1 !important;
-  border: 1px solid #475569 !important;
-  background: #273449 !important;
-  color: #e2e8f0 !important;
-}
-
-.today-chip-btn {
-  display: none;
-  grid-column: 1 / -1;
-  justify-self: center;
+.today-mini {
+  flex: 0 0 auto;
   width: auto !important;
-  min-height: 28px !important;
-  padding: 4px 12px !important;
+  height: 20px;
+  min-height: 20px !important;
+  padding: 2px 8px !important;
   border-radius: 999px !important;
   border: 1px solid #475569 !important;
   background: #273449 !important;
   color: #dbeafe !important;
-  font-size: 12px !important;
+  font-size: 10px !important;
   font-weight: 900;
+  line-height: 1;
 }
 
-.today-chip-btn.show {
-  display: inline-flex;
+.today-mini.is-hidden {
+  display: none !important;
+}
+
+.date-nav-wrap {
+  width: 100%;
+  display: grid;
+  gap: 4px;
+}
+
+.date-nav {
+  width: 100%;
+  min-height: 32px;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 34px;
+  align-items: center;
+  gap: 7px;
+}
+
+.date-arrow,
+.date-display {
+  height: 32px;
+  border-radius: 12px;
+  border: 1px solid #475569;
+  background: #111827;
+  color: #f8fafc;
+}
+
+.date-arrow {
+  width: 34px !important;
+  min-width: 34px !important;
+  padding: 0 0 2px !important;
+  font-size: 22px !important;
+  line-height: 1;
+  font-weight: 900;
+  display: flex;
   align-items: center;
   justify-content: center;
 }
 
-#eventDate {
-  width: 100%;
+.date-display {
+  position: relative;
+  min-width: 0;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-@media (max-width: 900px) {
-  .compact-date-controls {
-    grid-template-columns: 32px minmax(0, 1fr) 32px !important;
-    gap: 7px !important;
-  }
-
-  .date-arrow-btn {
-    width: 32px !important;
-    min-width: 32px !important;
-    height: 31px !important;
-    min-height: 31px !important;
-    font-size: 21px !important;
-  }
-
-  .compact-date-controls .date-picker-shell {
-    min-height: 31px !important;
-    padding: 5px 9px !important;
-    font-size: 13px !important;
-  }
-
-  .schedule-scroll {
-    max-height: none !important;
-    min-height: 0 !important;
-    overflow: visible !important;
-    -webkit-overflow-scrolling: auto !important;
-  }
-
-  .schedule-wrap {
-    overflow: visible !important;
-  }
-
-  .schedule-subheader {
-    position: static !important;
-  }
+#datePickerLabel {
+  display: block;
+  max-width: 100%;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
 }
 
-@media (max-width: 480px) {
-  .compact-date-controls {
-    grid-template-columns: 31px minmax(0, 1fr) 31px !important;
-    gap: 6px !important;
-  }
-
-  .date-arrow-btn {
-    width: 31px !important;
-    min-width: 31px !important;
-  }
+.date-display input,
+#datePicker {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
 }
 
+.filter-area select,
+#typeFilter {
+  height: 28px !important;
+  min-height: 28px !important;
+  font-size: 12px !important;
+  font-weight: 800;
+  padding: 3px 18px 3px 10px !important;
+  background-position: calc(100% - 13px) 12px, calc(100% - 8px) 12px !important;
+}
 
-/* feedback step 2: modal overflow fix + one-line date navigation */
 .event-sheet {
-  width: min(390px, calc(100vw - 22px)) !important;
-  max-width: calc(100vw - 22px) !important;
+  width: min(390px, calc(100vw - 20px)) !important;
+  max-width: calc(100vw - 20px) !important;
   overflow-x: hidden !important;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
 }
 
 .event-sheet *,
@@ -2156,130 +2175,57 @@ select {
 .event-sheet select {
   padding-left: 10px !important;
   padding-right: 22px !important;
-  background-position: calc(100% - 14px) 13px, calc(100% - 9px) 13px !important;
+  text-align: left;
+  text-align-last: left;
+  background-position: calc(100% - 14px) 14px, calc(100% - 9px) 14px !important;
 }
 
-.compact-date-controls {
-  position: relative;
-  display: grid !important;
-  grid-template-columns: 30px minmax(0, 1fr) 30px !important;
-  gap: 6px !important;
-  align-items: center !important;
+.schedule-scroll {
+  max-height: none !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  -webkit-overflow-scrolling: auto !important;
 }
 
-.compact-date-controls .date-picker-shell {
-  position: relative;
-  grid-column: auto !important;
-  min-width: 0 !important;
-  min-height: 31px !important;
-  padding: 5px 42px 5px 42px !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.schedule-wrap {
+  overflow: visible !important;
 }
 
-#datePickerLabel {
-  display: block;
-  max-width: 100%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  text-align: center;
-}
-
-.date-arrow-btn {
-  width: 30px !important;
-  min-width: 30px !important;
-  height: 30px !important;
-  min-height: 30px !important;
-  font-size: 21px !important;
-  padding: 0 !important;
-}
-
-.today-chip-btn {
-  display: none;
-  position: absolute;
-  top: -9px;
-  right: 6px;
-  width: auto !important;
-  min-height: 18px !important;
-  height: 18px !important;
-  padding: 1px 6px !important;
-  border-radius: 999px !important;
-  font-size: 10px !important;
-  line-height: 1 !important;
-  z-index: 3;
-  background: #334155 !important;
-  color: #dbeafe !important;
-  border: 1px solid #475569 !important;
-}
-
-.today-chip-btn.show {
-  display: inline-flex !important;
-  align-items: center;
-  justify-content: center;
-}
-
-.date-picker-shell input {
-  position: absolute;
-  inset: 0;
-  width: 100% !important;
-  height: 100% !important;
-  opacity: 0;
-  z-index: 2;
-}
-
-.today-chip-btn {
-  pointer-events: auto;
+.schedule-subheader {
+  position: static !important;
 }
 
 @media (max-width: 900px) {
+  .date-nav {
+    grid-template-columns: 34px minmax(0, 1fr) 34px;
+    gap: 7px;
+  }
+
   .event-sheet {
-    width: calc(100vw - 18px) !important;
-    max-width: calc(100vw - 18px) !important;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 12px !important;
-    padding-right: 12px !important;
-  }
-
-  .compact-date-controls {
-    grid-template-columns: 29px minmax(0, 1fr) 29px !important;
-    gap: 6px !important;
-  }
-
-  .date-arrow-btn {
-    width: 29px !important;
-    min-width: 29px !important;
-    height: 29px !important;
-    min-height: 29px !important;
-  }
-
-  .compact-date-controls .date-picker-shell {
-    min-height: 30px !important;
-    padding: 5px 40px 5px 40px !important;
-    font-size: 13px !important;
+    width: calc(100vw - 20px) !important;
+    max-width: calc(100vw - 20px) !important;
   }
 }
 
 @media (max-width: 390px) {
+  .date-nav {
+    grid-template-columns: 32px minmax(0, 1fr) 32px;
+    gap: 6px;
+  }
+
+  .date-arrow {
+    width: 32px !important;
+    min-width: 32px !important;
+  }
+
+  #datePickerLabel {
+    font-size: 12px;
+  }
+
   .event-sheet {
-    width: calc(100vw - 14px) !important;
-    max-width: calc(100vw - 14px) !important;
+    width: calc(100vw - 16px) !important;
+    max-width: calc(100vw - 16px) !important;
     padding-left: 10px !important;
     padding-right: 10px !important;
-  }
-
-  .compact-date-controls .date-picker-shell {
-    padding-left: 32px !important;
-    padding-right: 32px !important;
-    font-size: 12px !important;
-  }
-
-  .today-chip-btn {
-    right: 4px;
-    font-size: 9px !important;
-    padding-left: 5px !important;
-    padding-right: 5px !important;
   }
 }

@@ -1,4 +1,4 @@
-const CACHE_NAME = "dayplan-v16-visible";
+const CACHE_NAME = "dayplan-ui-applied-v1";
 const ASSETS = [
   "./",
   "./index.html",
