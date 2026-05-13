@@ -1,11 +1,11 @@
-const CACHE_NAME = "dayplan-final-now-hide-time";
+const CACHE_NAME = "dayplan-calendar-sync-v1";
 const ASSETS = [
-  "./index.html?v=final-now-hide-time",
-  "./style.css?v=final-now-hide-time",
-  "./app.js?v=final-now-hide-time",
-  "./manifest.json?v=final-now-hide-time",
-  "./icon-192.png?v=final-now-hide-time",
-  "./icon-512.png?v=final-now-hide-time"
+  "./index.html?v=calendar-sync-v1",
+  "./style.css?v=calendar-sync-v1",
+  "./app.js?v=calendar-sync-v1",
+  "./manifest.json?v=calendar-sync-v1",
+  "./icon-192.png?v=calendar-sync-v1",
+  "./icon-512.png?v=calendar-sync-v1"
 ];
 
 self.addEventListener("install", event => {

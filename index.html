@@ -5,18 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#111827" />
   <meta name="description" content="오늘의 시간부터 한 달의 흐름까지 가볍게 정리하는 일정표입니다." />
-  <link rel="manifest" href="manifest.json?v=final-now-hide-time" />
-  <link rel="apple-touch-icon" href="icon-192.png?v=final-now-hide-time" />
-  <link rel="stylesheet" href="style.css?v=final-now-hide-time" />
-  <title>데이플랜</title>
+  <link rel="manifest" href="manifest.json?v=calendar-sync-v1" />
+  <link rel="apple-touch-icon" href="icon-192.png?v=calendar-sync-v1" />
+  <link rel="stylesheet" href="style.css?v=calendar-sync-v1" />
+  <title>데이플랜 Calendar Sync v1</title>
 </head>
 <body>
   <div class="phone">
     <header>
       <div class="app-title-row">
         <div>
-          <h1>데이플랜</h1>
-          <p>오늘의 시간부터 한 달의 흐름까지 가볍게 정리하세요.</p>
+          <h1>데이플랜 Calendar Sync v1</h1>
+          <p>오늘의 시간부터 한 달의 흐름까지 가볍게 정리하세요. · Calendar Sync v1</p>
         </div>
         <button id="settingsBtn" class="settings-btn" type="button" aria-label="설정">⚙</button>
       </div>
@@ -80,6 +80,13 @@
       </div>
 
       <div class="settings-list">
+        <section class="calendar-sync-card">
+          <button id="calendarSyncBtn" class="calendar-sync-btn" type="button">캘린더 업데이트</button>
+          <button id="copyCalendarUrlBtn" class="calendar-copy-btn" type="button">구독 URL 복사</button>
+          <div id="calendarSyncMeta" class="calendar-sync-meta">마지막 업데이트: 아직 없음</div>
+        </section>
+
+
         <section class="settings-section" data-section="category">
           <button class="section-toggle" type="button" data-toggle="category">
             <span>일정 종류 관리</span>
@@ -174,6 +181,6 @@
     </section>
   </div>
 
-  <script src="app.js?v=final-now-hide-time"></script>
+  <script src="app.js?v=calendar-sync-v1"></script>
 </body>
 </html>

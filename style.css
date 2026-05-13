@@ -1760,3 +1760,46 @@ select {
   color: transparent !important;
   text-shadow: none !important;
 }
+
+
+/* calendar sync v1 */
+.calendar-sync-card {
+  display: grid;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  background: #111827;
+}
+
+.calendar-sync-btn,
+.calendar-copy-btn {
+  width: 100%;
+  min-height: 31px;
+  border-radius: 9px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.calendar-sync-btn {
+  border: 0;
+  background: #64748b;
+}
+
+.calendar-copy-btn {
+  background: #273449;
+  border: 1px solid #475569;
+}
+
+.calendar-sync-btn:disabled,
+.calendar-copy-btn:disabled {
+  opacity: 0.65;
+}
+
+.calendar-sync-meta {
+  color: #94a3b8;
+  font-size: 10px;
+  line-height: 1.35;
+  text-align: center;
+}

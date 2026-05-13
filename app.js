@@ -1,6 +1,14 @@
 const startHour = 6;
 const endHour = 26;
 const slotMinutes = 30;
+const supabaseConfig = {
+  restUrl: "https://izlnkgamnpyosdhyeofl.supabase.co/rest/v1",
+  publishableKey: "sb_publishable_9eS6u8IqBVU1YA7hVesrhg_jFJ_eMxJ",
+  functionUrl: "https://izlnkgamnpyosdhyeofl.supabase.co/functions/v1/dayplan-ics"
+};
+const syncIdentityKey = "dayplan-sync-identity-v1";
+const calendarSyncMetaKey = "dayplan-calendar-sync-meta-v1";
+
 const storageKey = "dayplan-mobile-clean-v5";
 const legacyKeys = [
   "dayplan-mobile-refactor-v1",
@@ -15,6 +23,9 @@ const els = {
   settingsModal: document.getElementById("settingsModal"),
   settingsBackdrop: document.getElementById("settingsBackdrop"),
   settingsCloseBtn: document.getElementById("settingsCloseBtn"),
+  calendarSyncBtn: document.getElementById("calendarSyncBtn"),
+  copyCalendarUrlBtn: document.getElementById("copyCalendarUrlBtn"),
+  calendarSyncMeta: document.getElementById("calendarSyncMeta"),
   newCategoryName: document.getElementById("newCategoryName"),
   newCategoryColor: document.getElementById("newCategoryColor"),
   addCategoryBtn: document.getElementById("addCategoryBtn"),
@@ -523,6 +534,132 @@ function scrollToCurrentTimeOnOpen() {
   });
 }
 
+
+function getSyncIdentity() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(syncIdentityKey));
+    if (saved?.ownerId && saved?.syncToken) return saved;
+  } catch {}
+
+  const ownerId = `owner-${crypto.randomUUID()}`;
+  const syncToken = `${crypto.randomUUID()}-${crypto.randomUUID()}`;
+  const identity = { ownerId, syncToken };
+  localStorage.setItem(syncIdentityKey, JSON.stringify(identity));
+  return identity;
+}
+
+function getCalendarUrl() {
+  const identity = getSyncIdentity();
+  const url = new URL(supabaseConfig.functionUrl);
+  url.searchParams.set("owner", identity.ownerId);
+  url.searchParams.set("token", identity.syncToken);
+  return url.toString();
+}
+
+function getSupabaseHeaders() {
+  return {
+    "apikey": supabaseConfig.publishableKey,
+    "Authorization": `Bearer ${supabaseConfig.publishableKey}`,
+    "Content-Type": "application/json",
+    "Prefer": "return=minimal"
+  };
+}
+
+async function deleteRows(table, identity) {
+  const url = `${supabaseConfig.restUrl}/${table}?owner_id=eq.${encodeURIComponent(identity.ownerId)}&sync_token=eq.${encodeURIComponent(identity.syncToken)}`;
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: getSupabaseHeaders()
+  });
+
+  if (!response.ok) {
+    throw new Error(`${table} 삭제 실패: ${await response.text()}`);
+  }
+}
+
+async function insertRows(table, rows) {
+  if (!rows.length) return;
+
+  const response = await fetch(`${supabaseConfig.restUrl}/${table}`, {
+    method: "POST",
+    headers: getSupabaseHeaders(),
+    body: JSON.stringify(rows)
+  });
+
+  if (!response.ok) {
+    throw new Error(`${table} 저장 실패: ${await response.text()}`);
+  }
+}
+
+function toDbEvent(event, identity) {
+  return {
+    id: event.id,
+    owner_id: identity.ownerId,
+    sync_token: identity.syncToken,
+    date: event.date,
+    title: event.title,
+    category_id: event.categoryId || null,
+    memo: event.memo || null,
+    start_minutes: event.isUnscheduled ? null : event.start,
+    end_minutes: event.isUnscheduled ? null : event.end,
+    is_unscheduled: Boolean(event.isUnscheduled),
+    repeat_type: event.repeat || "none",
+    updated_at: new Date().toISOString()
+  };
+}
+
+function toDbCategory(category, identity) {
+  return {
+    id: category.id,
+    owner_id: identity.ownerId,
+    sync_token: identity.syncToken,
+    name: category.name,
+    color: category.color,
+    updated_at: new Date().toISOString()
+  };
+}
+
+function formatSyncTime(date) {
+  return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function updateCalendarSyncMeta(text) {
+  if (els.calendarSyncMeta) els.calendarSyncMeta.textContent = text;
+}
+
+function restoreCalendarSyncMeta() {
+  const saved = localStorage.getItem(calendarSyncMetaKey);
+  updateCalendarSyncMeta(saved || "마지막 업데이트: 아직 없음");
+}
+
+async function syncCalendarToSupabase() {
+  const identity = getSyncIdentity();
+
+  updateCalendarSyncMeta("업데이트 중...");
+
+  await deleteRows("dayplan_events", identity);
+  await deleteRows("dayplan_categories", identity);
+
+  await insertRows("dayplan_categories", appData.categories.map(category => toDbCategory(category, identity)));
+  await insertRows("dayplan_events", appData.events.map(event => toDbEvent(event, identity)));
+
+  const message = `마지막 업데이트: ${formatSyncTime(new Date())}`;
+  localStorage.setItem(calendarSyncMetaKey, message);
+  updateCalendarSyncMeta(message);
+}
+
+async function copyCalendarUrl() {
+  const url = getCalendarUrl();
+
+  try {
+    await navigator.clipboard.writeText(url);
+    updateCalendarSyncMeta("구독 URL 복사 완료");
+    setTimeout(restoreCalendarSyncMeta, 1800);
+  } catch {
+    prompt("아래 구독 URL을 복사하세요.", url);
+  }
+}
+
 function renderSchedule() {
   updateDateLabel();
   updateTodayButton();
@@ -829,6 +966,27 @@ if (els.isUnscheduled) {
 }
 
 
+
+if (els.calendarSyncBtn) {
+  els.calendarSyncBtn.addEventListener("click", async () => {
+    els.calendarSyncBtn.disabled = true;
+    try {
+      await syncCalendarToSupabase();
+    } catch (error) {
+      console.error(error);
+      updateCalendarSyncMeta("업데이트 실패");
+      alert(error.message || "캘린더 업데이트에 실패했습니다.");
+    } finally {
+      els.calendarSyncBtn.disabled = false;
+    }
+  });
+}
+
+if (els.copyCalendarUrlBtn) {
+  els.copyCalendarUrlBtn.addEventListener("click", copyCalendarUrl);
+}
+
+
 els.sectionToggles.forEach(button => {
   button.addEventListener("click", () => {
     const section = button.closest(".tool-section, .settings-section");
@@ -952,6 +1110,7 @@ els.datePicker.value = selectedDate;
 els.eventDate.value = selectedDate;
 updateEventDateLabel();
 renderAll();
+restoreCalendarSyncMeta();
 scrollToCurrentTimeOnOpen();
 setInterval(updateCurrentTimeMarker, 60000);
 registerServiceWorker();
