@@ -1,11 +1,11 @@
-const CACHE_NAME = "dayplan-calendar-sync-final";
+const CACHE_NAME = "dayplan-category-sync-v1";
 const ASSETS = [
-  "./index.html?v=calendar-sync-final",
-  "./style.css?v=calendar-sync-final",
-  "./app.js?v=calendar-sync-final",
-  "./manifest.json?v=calendar-sync-final",
-  "./icon-192.png?v=calendar-sync-final",
-  "./icon-512.png?v=calendar-sync-final"
+  "./index.html?v=category-sync-v1",
+  "./style.css?v=category-sync-v1",
+  "./app.js?v=category-sync-v1",
+  "./manifest.json?v=category-sync-v1",
+  "./icon-192.png?v=category-sync-v1",
+  "./icon-512.png?v=category-sync-v1"
 ];
 
 self.addEventListener("install", event => {

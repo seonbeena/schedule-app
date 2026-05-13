@@ -182,6 +182,13 @@ function loadAppData() {
   return { categories: [], events: [] };
 }
 
+function normalizeCategorySyncFlags() {
+  appData.categories = appData.categories.map(category => ({
+    ...category,
+    syncToCalendar: category.syncToCalendar !== false
+  }));
+}
+
 function saveAppData() {
   localStorage.setItem(storageKey, JSON.stringify(appData));
 }
@@ -311,6 +318,9 @@ function renderCategories() {
         <span class="dot" style="background:${category.color}"></span>
         <span>${escapeHTML(category.name)}</span>
       </div>
+      <button class="category-sync-btn ${category.syncToCalendar === false ? "off" : ""}" type="button" data-category-sync-id="${category.id}">
+        캘린더 ${category.syncToCalendar === false ? "OFF" : "ON"}
+      </button>
       <button class="category-delete-btn" type="button" data-category-id="${category.id}">삭제</button>
     </div>
   `).join("");
@@ -591,6 +601,12 @@ async function insertRows(table, rows) {
   }
 }
 
+
+function shouldSyncEventToCalendar(event) {
+  const category = appData.categories.find(item => item.id === event.categoryId);
+  return !category || category.syncToCalendar !== false;
+}
+
 function toDbEvent(event, identity) {
   return {
     id: event.id,
@@ -640,10 +656,12 @@ async function syncCalendarToSupabase() {
   await deleteRows("dayplan_events", identity);
   await deleteRows("dayplan_categories", identity);
 
-  await insertRows("dayplan_categories", appData.categories.map(category => toDbCategory(category, identity)));
-  await insertRows("dayplan_events", appData.events.map(event => toDbEvent(event, identity)));
+  const calendarEvents = appData.events.filter(shouldSyncEventToCalendar);
 
-  const message = `마지막 업데이트: ${formatSyncTime(new Date())}`;
+  await insertRows("dayplan_categories", appData.categories.map(category => toDbCategory(category, identity)));
+  await insertRows("dayplan_events", calendarEvents.map(event => toDbEvent(event, identity)));
+
+  const message = `마지막 업데이트: ${formatSyncTime(new Date())} · ${calendarEvents.length}개 전송`;
   localStorage.setItem(calendarSyncMetaKey, message);
   updateCalendarSyncMeta(message);
 }
@@ -720,6 +738,7 @@ function renderSearchResults() {
 }
 
 function renderAll() {
+  normalizeCategorySyncFlags();
   renderCategories();
   renderSchedule();
   renderSearchResults();
@@ -742,10 +761,21 @@ function addCategory() {
   appData.categories.push({
     id: createId("category"),
     name,
-    color
+    color,
+    syncToCalendar: true
   });
 
   els.newCategoryName.value = "";
+  saveAppData();
+  renderAll();
+}
+
+
+function toggleCategoryCalendarSync(id) {
+  const category = appData.categories.find(item => item.id === id);
+  if (!category) return;
+
+  category.syncToCalendar = category.syncToCalendar === false ? true : false;
   saveAppData();
   renderAll();
 }
@@ -1012,6 +1042,12 @@ els.sectionToggles.forEach(button => {
 els.addCategoryBtn.addEventListener("click", addCategory);
 
 els.categoryList.addEventListener("click", event => {
+  const syncButton = event.target.closest("[data-category-sync-id]");
+  if (syncButton) {
+    toggleCategoryCalendarSync(syncButton.dataset.categorySyncId);
+    return;
+  }
+
   const button = event.target.closest("[data-category-id]");
   if (!button) return;
   deleteCategory(button.dataset.categoryId);

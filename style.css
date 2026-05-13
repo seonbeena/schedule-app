@@ -1803,3 +1803,35 @@ select {
   line-height: 1.35;
   text-align: center;
 }
+
+
+/* category sync v1: per-category calendar toggle */
+.category-item {
+  grid-template-columns: minmax(0, 1fr) auto auto !important;
+}
+
+.category-sync-btn {
+  width: auto;
+  min-height: 22px;
+  padding: 2px 7px;
+  border-radius: 7px;
+  border: 1px solid #475569;
+  background: #273449;
+  color: #dbeafe;
+  font-size: 10px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.category-sync-btn.off {
+  background: #1f2937;
+  color: #94a3b8;
+  border-color: #334155;
+}
+
+.settings-section .category-sync-btn {
+  min-height: 22px;
+  padding: 2px 7px;
+  border-radius: 7px;
+  font-size: 10px;
+}
