@@ -5,18 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#111827" />
   <meta name="description" content="오늘의 시간부터 한 달의 흐름까지 가볍게 정리하는 일정표입니다." />
-  <link rel="manifest" href="manifest.json?v=backup-v2" />
-  <link rel="apple-touch-icon" href="icon-192.png?v=backup-v2" />
-  <link rel="stylesheet" href="style.css?v=backup-v2" />
-  <title>데이플랜 Backup v2</title>
+  <link rel="manifest" href="manifest.json?v=backup-v3" />
+  <link rel="apple-touch-icon" href="icon-192.png?v=backup-v3" />
+  <link rel="stylesheet" href="style.css?v=backup-v3" />
+  <title>데이플랜 Backup v3</title>
 </head>
 <body>
   <div class="phone">
     <header>
       <div class="app-title-row">
         <div>
-          <h1>데이플랜 Backup v2</h1>
-          <p>오늘의 시간부터 한 달의 흐름까지 가볍게 정리하세요. · Backup v2</p>
+          <h1>데이플랜 Backup v3</h1>
+          <p>오늘의 시간부터 한 달의 흐름까지 가볍게 정리하세요. · Backup v3</p>
         </div>
         <button id="settingsBtn" class="settings-btn" type="button" aria-label="설정">⚙</button>
       </div>
@@ -133,6 +133,18 @@
     </section>
   </div>
 
+  <div id="backupCodeModal" class="modal" aria-hidden="true">
+    <div id="backupCodeBackdrop" class="modal-backdrop"></div>
+    <section class="event-sheet backup-code-sheet" role="dialog" aria-modal="true" aria-labelledby="backupCodeTitle">
+      <div class="sheet-header">
+        <h2 id="backupCodeTitle">연동 코드</h2>
+        <button id="backupCodeCloseBtn" class="icon-btn" type="button" aria-label="닫기">×</button>
+      </div>
+      <textarea id="backupCodeText" class="backup-code-text" readonly></textarea>
+      <button id="selectBackupCodeBtn" class="backup-code-btn" type="button">전체 선택</button>
+    </section>
+  </div>
+
   <div id="eventModal" class="modal" aria-hidden="true">
     <div id="modalBackdrop" class="modal-backdrop"></div>
     <section class="event-sheet" role="dialog" aria-modal="true" aria-labelledby="eventModalTitle">
@@ -197,6 +209,6 @@
     </section>
   </div>
 
-  <script src="app.js?v=backup-v2"></script>
+  <script src="app.js?v=backup-v3"></script>
 </body>
 </html>

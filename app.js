@@ -28,6 +28,11 @@ const els = {
   calendarSyncMeta: document.getElementById("calendarSyncMeta"),
   copyBackupCodeBtn: document.getElementById("copyBackupCodeBtn"),
   importBackupCodeBtn: document.getElementById("importBackupCodeBtn"),
+  backupCodeModal: document.getElementById("backupCodeModal"),
+  backupCodeBackdrop: document.getElementById("backupCodeBackdrop"),
+  backupCodeCloseBtn: document.getElementById("backupCodeCloseBtn"),
+  backupCodeText: document.getElementById("backupCodeText"),
+  selectBackupCodeBtn: document.getElementById("selectBackupCodeBtn"),
   newCategoryName: document.getElementById("newCategoryName"),
   newCategoryColor: document.getElementById("newCategoryColor"),
   addCategoryBtn: document.getElementById("addCategoryBtn"),
@@ -746,6 +751,29 @@ function fallbackCopyText(text) {
   return copied;
 }
 
+function openBackupCodeModal(code) {
+  if (!els.backupCodeModal || !els.backupCodeText) {
+    prompt("아래 연동 코드를 복사해서 안전한 곳에 보관하세요.", code);
+    return;
+  }
+
+  els.backupCodeText.value = code;
+  els.backupCodeModal.classList.add("open");
+  els.backupCodeModal.setAttribute("aria-hidden", "false");
+
+  requestAnimationFrame(() => {
+    els.backupCodeText.focus();
+    els.backupCodeText.select();
+    els.backupCodeText.setSelectionRange(0, els.backupCodeText.value.length);
+  });
+}
+
+function closeBackupCodeModal() {
+  if (!els.backupCodeModal) return;
+  els.backupCodeModal.classList.remove("open");
+  els.backupCodeModal.setAttribute("aria-hidden", "true");
+}
+
 async function copyBackupCode() {
   const code = encodeBackupPayload(createBackupPayload());
   let copied = false;
@@ -763,17 +791,15 @@ async function copyBackupCode() {
     copied = fallbackCopyText(code);
   }
 
+  openBackupCodeModal(code);
+
   if (copied) {
     updateCalendarSyncMeta("연동 코드 복사 완료");
-    setTimeout(restoreCalendarSyncMeta, 1800);
-    return;
+  } else {
+    updateCalendarSyncMeta("연동 코드 직접 복사 필요");
   }
 
-  const manualCopy = prompt("자동 복사가 안 됐습니다. 아래 연동 코드를 직접 복사하세요.", code);
-  if (manualCopy !== null) {
-    updateCalendarSyncMeta("연동 코드 직접 복사 필요");
-    setTimeout(restoreCalendarSyncMeta, 1800);
-  }
+  setTimeout(restoreCalendarSyncMeta, 1800);
 }
 
 function validateImportedBackup(payload) {
@@ -1235,6 +1261,25 @@ if (els.copyCalendarUrlBtn) {
   els.copyCalendarUrlBtn.addEventListener("click", copyCalendarUrl);
 }
 
+
+
+
+if (els.backupCodeCloseBtn) {
+  els.backupCodeCloseBtn.addEventListener("click", closeBackupCodeModal);
+}
+
+if (els.backupCodeBackdrop) {
+  els.backupCodeBackdrop.addEventListener("click", closeBackupCodeModal);
+}
+
+if (els.selectBackupCodeBtn) {
+  els.selectBackupCodeBtn.addEventListener("click", () => {
+    if (!els.backupCodeText) return;
+    els.backupCodeText.focus();
+    els.backupCodeText.select();
+    els.backupCodeText.setSelectionRange(0, els.backupCodeText.value.length);
+  });
+}
 
 
 if (els.copyBackupCodeBtn) {
