@@ -1855,3 +1855,40 @@ select {
   padding-left: 4px !important;
   padding-right: 18px !important;
 }
+
+
+/* month filter v1: per-category month visibility toggle */
+.category-item {
+  grid-template-columns: minmax(0, 1fr) auto auto auto !important;
+}
+
+.category-month-btn {
+  width: auto;
+  min-height: 22px;
+  padding: 2px 7px;
+  border-radius: 7px;
+  border: 1px solid #475569;
+  background: #273449;
+  color: #dbeafe;
+  font-size: 10px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.category-month-btn.off {
+  background: #1f2937;
+  color: #94a3b8;
+  border-color: #334155;
+}
+
+.settings-section .category-month-btn {
+  min-height: 22px;
+  padding: 2px 7px;
+  border-radius: 7px;
+  font-size: 10px;
+}
+
+/* no repeat hint: keep modal compact */
+.event-sheet .hint {
+  display: none !important;
+}

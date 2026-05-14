@@ -189,8 +189,13 @@ function loadAppData() {
 function normalizeCategorySyncFlags() {
   appData.categories = appData.categories.map(category => ({
     ...category,
-    syncToCalendar: category.syncToCalendar !== false
+    syncToCalendar: category.syncToCalendar !== false,
+    showInMonth: category.showInMonth !== false
   }));
+}
+
+function normalizeCategoryVisibilityFlags() {
+  normalizeCategoryVisibilityFlags();
 }
 
 function saveAppData() {
@@ -277,6 +282,12 @@ function getEventsForDate(dateString) {
     .sort((a, b) => a.start - b.start);
 }
 
+
+function shouldShowEventInMonth(event) {
+  const category = appData.categories.find(item => item.id === event.categoryId);
+  return !category || category.showInMonth !== false;
+}
+
 function getVisibleEventsForDate(dateString) {
   const events = getEventsForDate(dateString);
   if (els.typeFilter.value === "all") return events;
@@ -348,6 +359,9 @@ function renderCategories() {
         <span class="dot" style="background:${category.color}"></span>
         <span>${escapeHTML(category.name)}</span>
       </div>
+      <button class="category-month-btn ${category.showInMonth === false ? "off" : ""}" type="button" data-category-month-id="${category.id}">
+        월간 ${category.showInMonth === false ? "OFF" : "ON"}
+      </button>
       <button class="category-sync-btn ${category.syncToCalendar === false ? "off" : ""}" type="button" data-category-sync-id="${category.id}">
         캘린더 ${category.syncToCalendar === false ? "OFF" : "ON"}
       </button>
@@ -426,7 +440,7 @@ function renderWeekView() {
   const week = getWeekDates(selectedDate);
   els.schedule.className = "schedule-scroll week-list";
   els.schedule.innerHTML = week.map(date => {
-    const events = getVisibleEventsForDate(date);
+    const events = getVisibleEventsForDate(date).filter(shouldShowEventInMonth);
     const list = events.length
       ? events.map(event => {
           const category = getCategory(event.categoryId);
@@ -460,7 +474,7 @@ function renderMonthView() {
 
   els.schedule.innerHTML += dates.map(date => {
     const parsed = parseDate(date);
-    const events = getVisibleEventsForDate(date);
+    const events = getVisibleEventsForDate(date).filter(shouldShowEventInMonth);
     const dots = events.slice(0, 6).map(event => {
       const category = getCategory(event.categoryId);
       return `<span class="month-dot" style="background:${category.color}"></span>`;
@@ -745,8 +759,16 @@ function renderSchedule() {
   renderSummary();
 
   const countScopeDates = getCountScopeDates();
-  const total = countScopeDates.reduce((sum, date) => sum + getEventsForDate(date).length, 0);
-  const visible = countScopeDates.reduce((sum, date) => sum + getVisibleEventsForDate(date).length, 0);
+  const countEventsForDate = (date) => {
+    const events = getEventsForDate(date);
+    return viewMode === "month" ? events.filter(shouldShowEventInMonth) : events;
+  };
+  const countVisibleEventsForDate = (date) => {
+    const events = getVisibleEventsForDate(date);
+    return viewMode === "month" ? events.filter(shouldShowEventInMonth) : events;
+  };
+  const total = countScopeDates.reduce((sum, date) => sum + countEventsForDate(date).length, 0);
+  const visible = countScopeDates.reduce((sum, date) => sum + countVisibleEventsForDate(date).length, 0);
   els.eventCount.textContent = els.typeFilter.value === "all" ? `${total}개 일정` : `${visible}/${total}개 일정`;
 
   els.dayViewBtn.classList.toggle("active", viewMode === "day");
@@ -812,7 +834,8 @@ function addCategory() {
     id: createId("category"),
     name,
     color,
-    syncToCalendar: true
+    syncToCalendar: true,
+    showInMonth: true
   });
 
   els.newCategoryName.value = "";
@@ -820,6 +843,16 @@ function addCategory() {
   renderAll();
 }
 
+
+
+function toggleCategoryMonthVisibility(id) {
+  const category = appData.categories.find(item => item.id === id);
+  if (!category) return;
+
+  category.showInMonth = category.showInMonth === false ? true : false;
+  saveAppData();
+  renderAll();
+}
 
 function toggleCategoryCalendarSync(id) {
   const category = appData.categories.find(item => item.id === id);
@@ -1092,6 +1125,12 @@ els.sectionToggles.forEach(button => {
 els.addCategoryBtn.addEventListener("click", addCategory);
 
 els.categoryList.addEventListener("click", event => {
+  const monthButton = event.target.closest("[data-category-month-id]");
+  if (monthButton) {
+    toggleCategoryMonthVisibility(monthButton.dataset.categoryMonthId);
+    return;
+  }
+
   const syncButton = event.target.closest("[data-category-sync-id]");
   if (syncButton) {
     toggleCategoryCalendarSync(syncButton.dataset.categorySyncId);
