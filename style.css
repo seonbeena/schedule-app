@@ -1948,3 +1948,14 @@ select {
 .backup-warning {
   display: none !important;
 }
+
+
+/* backup v5: fix backup code generation and moderate button spacing */
+.backup-content {
+  display: grid;
+  gap: 7px !important;
+}
+
+.backup-code-btn + .backup-code-btn {
+  margin-top: 0 !important;
+}

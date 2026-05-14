@@ -197,7 +197,7 @@ function normalizeCategorySyncFlags() {
 }
 
 function normalizeCategoryVisibilityFlags() {
-  normalizeCategoryVisibilityFlags();
+  normalizeCategorySyncFlags();
 }
 
 function saveAppData() {
