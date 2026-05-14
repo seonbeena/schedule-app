@@ -1946,3 +1946,23 @@ select {
 .settings-section.open .backup-content {
   display: block !important;
 }
+
+
+/* backup clean v4: fix backup accordion closed/open visibility */
+.settings-section:not(.open) > .section-content.backup-content {
+  display: none !important;
+}
+
+.settings-section.open > .section-content.backup-content {
+  display: block !important;
+}
+
+.settings-section.open > .section-content.backup-content #copyBackupCodeBtn,
+.settings-section.open > .section-content.backup-content #importBackupCodeBtn {
+  display: block !important;
+  width: 100% !important;
+}
+
+.settings-section.open > .section-content.backup-content #importBackupCodeBtn {
+  margin-top: 8px !important;
+}
