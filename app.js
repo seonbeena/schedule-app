@@ -721,15 +721,58 @@ function createBackupPayload() {
   };
 }
 
-async function copyBackupCode() {
-  const code = encodeBackupPayload(createBackupPayload());
+function fallbackCopyText(text) {
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.left = "-9999px";
+  textarea.style.top = "0";
+  document.body.appendChild(textarea);
+
+  textarea.focus();
+  textarea.select();
+  textarea.setSelectionRange(0, textarea.value.length);
+
+  let copied = false;
 
   try {
-    await navigator.clipboard.writeText(code);
+    copied = document.execCommand("copy");
+  } catch {
+    copied = false;
+  }
+
+  document.body.removeChild(textarea);
+  return copied;
+}
+
+async function copyBackupCode() {
+  const code = encodeBackupPayload(createBackupPayload());
+  let copied = false;
+
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(code);
+      copied = true;
+    }
+  } catch {
+    copied = false;
+  }
+
+  if (!copied) {
+    copied = fallbackCopyText(code);
+  }
+
+  if (copied) {
     updateCalendarSyncMeta("연동 코드 복사 완료");
     setTimeout(restoreCalendarSyncMeta, 1800);
-  } catch {
-    prompt("아래 연동 코드를 복사해서 안전한 곳에 보관하세요.", code);
+    return;
+  }
+
+  const manualCopy = prompt("자동 복사가 안 됐습니다. 아래 연동 코드를 직접 복사하세요.", code);
+  if (manualCopy !== null) {
+    updateCalendarSyncMeta("연동 코드 직접 복사 필요");
+    setTimeout(restoreCalendarSyncMeta, 1800);
   }
 }
 

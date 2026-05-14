@@ -1923,3 +1923,17 @@ select {
   line-height: 1.35;
   text-align: center;
 }
+
+
+/* backup v2: cleaner backup controls and stronger spacing */
+.backup-content {
+  gap: 10px !important;
+}
+
+.backup-warning {
+  display: none !important;
+}
+
+.backup-code-btn + .backup-code-btn {
+  margin-top: 0;
+}
