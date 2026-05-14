@@ -1,11 +1,11 @@
-const CACHE_NAME = "dayplan-backup-v5";
+const CACHE_NAME = "dayplan-backup-v6";
 const ASSETS = [
-  "./index.html?v=backup-v5",
-  "./style.css?v=backup-v5",
-  "./app.js?v=backup-v5",
-  "./manifest.json?v=backup-v5",
-  "./icon-192.png?v=backup-v5",
-  "./icon-512.png?v=backup-v5"
+  "./index.html?v=backup-v6",
+  "./style.css?v=backup-v6",
+  "./app.js?v=backup-v6",
+  "./manifest.json?v=backup-v6",
+  "./icon-192.png?v=backup-v6",
+  "./icon-512.png?v=backup-v6"
 ];
 
 self.addEventListener("install", event => {

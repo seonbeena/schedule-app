@@ -1959,3 +1959,15 @@ select {
 .backup-code-btn + .backup-code-btn {
   margin-top: 0 !important;
 }
+
+
+/* backup v6: match backup button spacing to calendar sync buttons */
+.backup-content {
+  display: grid;
+  gap: 6px !important;
+}
+
+#copyBackupCodeBtn,
+#importBackupCodeBtn {
+  margin: 0 !important;
+}
