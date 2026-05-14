@@ -26,6 +26,8 @@ const els = {
   calendarSyncBtn: document.getElementById("calendarSyncBtn"),
   copyCalendarUrlBtn: document.getElementById("copyCalendarUrlBtn"),
   calendarSyncMeta: document.getElementById("calendarSyncMeta"),
+  copyBackupCodeBtn: document.getElementById("copyBackupCodeBtn"),
+  importBackupCodeBtn: document.getElementById("importBackupCodeBtn"),
   newCategoryName: document.getElementById("newCategoryName"),
   newCategoryColor: document.getElementById("newCategoryColor"),
   addCategoryBtn: document.getElementById("addCategoryBtn"),
@@ -694,6 +696,97 @@ function restoreCalendarSyncMeta() {
   updateCalendarSyncMeta(saved || "마지막 업데이트: 아직 없음");
 }
 
+
+function encodeBackupPayload(payload) {
+  const json = JSON.stringify(payload);
+  return btoa(unescape(encodeURIComponent(json)));
+}
+
+function decodeBackupPayload(code) {
+  const json = decodeURIComponent(escape(atob(code.trim())));
+  return JSON.parse(json);
+}
+
+function createBackupPayload() {
+  normalizeCategoryVisibilityFlags();
+
+  return {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    identity: getSyncIdentity(),
+    appData: {
+      categories: appData.categories,
+      events: appData.events
+    }
+  };
+}
+
+async function copyBackupCode() {
+  const code = encodeBackupPayload(createBackupPayload());
+
+  try {
+    await navigator.clipboard.writeText(code);
+    updateCalendarSyncMeta("연동 코드 복사 완료");
+    setTimeout(restoreCalendarSyncMeta, 1800);
+  } catch {
+    prompt("아래 연동 코드를 복사해서 안전한 곳에 보관하세요.", code);
+  }
+}
+
+function validateImportedBackup(payload) {
+  if (!payload || typeof payload !== "object") {
+    throw new Error("연동 코드 형식이 올바르지 않습니다.");
+  }
+
+  if (!payload.identity?.ownerId || !payload.identity?.syncToken) {
+    throw new Error("연동 정보가 없습니다.");
+  }
+
+  if (!payload.appData || !Array.isArray(payload.appData.categories) || !Array.isArray(payload.appData.events)) {
+    throw new Error("복원할 일정 데이터가 없습니다.");
+  }
+}
+
+function normalizeImportedAppData(data) {
+  return {
+    categories: data.categories.map(category => ({
+      ...category,
+      syncToCalendar: category.syncToCalendar !== false,
+      showInMonth: category.showInMonth !== false
+    })),
+    events: data.events.map(event => ({
+      ...event,
+      isUnscheduled: Boolean(event.isUnscheduled)
+    }))
+  };
+}
+
+function importBackupCode() {
+  const code = prompt("저장해둔 연동 코드를 붙여넣으세요.");
+  if (!code) return;
+
+  let payload;
+
+  try {
+    payload = decodeBackupPayload(code);
+    validateImportedBackup(payload);
+  } catch (error) {
+    alert(error.message || "연동 코드를 읽을 수 없습니다.");
+    return;
+  }
+
+  const shouldImport = confirm("현재 기기의 데이플랜 일정이 연동 코드의 데이터로 교체됩니다. 계속할까요?");
+  if (!shouldImport) return;
+
+  localStorage.setItem(syncIdentityKey, JSON.stringify(payload.identity));
+  appData = normalizeImportedAppData(payload.appData);
+  saveAppData();
+  renderAll();
+
+  updateCalendarSyncMeta("연동 코드 불러오기 완료");
+  alert("연동 코드에서 일정을 복원했습니다. 화면을 확인한 뒤 필요하면 캘린더 업데이트를 눌러주세요.");
+}
+
 async function syncCalendarToSupabase() {
   const identity = getSyncIdentity();
 
@@ -1097,6 +1190,16 @@ if (els.calendarSyncBtn) {
 
 if (els.copyCalendarUrlBtn) {
   els.copyCalendarUrlBtn.addEventListener("click", copyCalendarUrl);
+}
+
+
+
+if (els.copyBackupCodeBtn) {
+  els.copyBackupCodeBtn.addEventListener("click", copyBackupCode);
+}
+
+if (els.importBackupCodeBtn) {
+  els.importBackupCodeBtn.addEventListener("click", importBackupCode);
 }
 
 

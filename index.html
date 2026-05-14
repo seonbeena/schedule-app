@@ -5,18 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#111827" />
   <meta name="description" content="오늘의 시간부터 한 달의 흐름까지 가볍게 정리하는 일정표입니다." />
-  <link rel="manifest" href="manifest.json?v=month-filter-v1" />
-  <link rel="apple-touch-icon" href="icon-192.png?v=month-filter-v1" />
-  <link rel="stylesheet" href="style.css?v=month-filter-v1" />
-  <title>데이플랜 Month Filter v1</title>
+  <link rel="manifest" href="manifest.json?v=backup-v1" />
+  <link rel="apple-touch-icon" href="icon-192.png?v=backup-v1" />
+  <link rel="stylesheet" href="style.css?v=backup-v1" />
+  <title>데이플랜 Backup v1</title>
 </head>
 <body>
   <div class="phone">
     <header>
       <div class="app-title-row">
         <div>
-          <h1>데이플랜 Month Filter v1</h1>
-          <p>오늘의 시간부터 한 달의 흐름까지 가볍게 정리하세요. · Month Filter v1</p>
+          <h1>데이플랜 Backup v1</h1>
+          <p>오늘의 시간부터 한 달의 흐름까지 가볍게 정리하세요. · Backup v1</p>
         </div>
         <button id="settingsBtn" class="settings-btn" type="button" aria-label="설정">⚙</button>
       </div>
@@ -86,6 +86,18 @@
           <div id="calendarSyncMeta" class="calendar-sync-meta">마지막 업데이트: 아직 없음</div>
         </section>
 
+
+        <section class="settings-section" data-section="backup">
+          <button class="section-toggle" type="button" data-toggle="backup">
+            <span>연동 관리</span>
+            <span class="toggle-icon">+</span>
+          </button>
+          <div class="section-content backup-content">
+            <button id="copyBackupCodeBtn" class="backup-code-btn" type="button">연동 코드 복사</button>
+            <button id="importBackupCodeBtn" class="backup-code-btn secondary" type="button">연동 코드 불러오기</button>
+            <p class="backup-warning">연동 코드는 일정 복구용 열쇠입니다. 다른 사람에게 공유하지 마세요.</p>
+          </div>
+        </section>
 
         <section class="settings-section" data-section="category">
           <button class="section-toggle" type="button" data-toggle="category">
@@ -186,6 +198,6 @@
     </section>
   </div>
 
-  <script src="app.js?v=month-filter-v1"></script>
+  <script src="app.js?v=backup-v1"></script>
 </body>
 </html>
