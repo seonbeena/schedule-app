@@ -1915,3 +1915,20 @@ select {
   background: #273449;
   border: 1px solid #475569;
 }
+
+
+/* backup clean v2: visually match backup button spacing with calendar sync buttons */
+.backup-content {
+  display: block !important;
+}
+
+#copyBackupCodeBtn,
+#importBackupCodeBtn {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+#importBackupCodeBtn {
+  margin-top: 8px !important;
+}
