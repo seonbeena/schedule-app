@@ -5,18 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#111827" />
   <meta name="description" content="오늘의 시간부터 한 달의 흐름까지 가볍게 정리하는 일정표입니다." />
-  <link rel="manifest" href="manifest.json?v=final-calendar-category" />
-  <link rel="apple-touch-icon" href="icon-192.png?v=final-calendar-category" />
-  <link rel="stylesheet" href="style.css?v=final-calendar-category" />
-  <title>데이플랜</title>
+  <link rel="manifest" href="manifest.json?v=time-v1" />
+  <link rel="apple-touch-icon" href="icon-192.png?v=time-v1" />
+  <link rel="stylesheet" href="style.css?v=time-v1" />
+  <title>데이플랜 Time v1</title>
 </head>
 <body>
   <div class="phone">
     <header>
       <div class="app-title-row">
         <div>
-          <h1>데이플랜</h1>
-          <p>오늘의 시간부터 한 달의 흐름까지 가볍게 정리하세요.</p>
+          <h1>데이플랜 Time v1</h1>
+          <p>오늘의 시간부터 한 달의 흐름까지 가볍게 정리하세요. · Time v1</p>
         </div>
         <button id="settingsBtn" class="settings-btn" type="button" aria-label="설정">⚙</button>
       </div>
@@ -152,14 +152,20 @@
         <span>시간 미정</span>
       </label>
 
-      <div id="timeFields" class="time-form-grid">
+      <div id="timeFields" class="time-form-grid split-time-fields">
         <div>
-          <label for="start">시작 시간</label>
-          <select id="start"></select>
+          <label>시작 시간</label>
+          <div class="split-time-row">
+            <select id="startHour" aria-label="시작 시"></select>
+            <select id="startMinute" aria-label="시작 분"></select>
+          </div>
         </div>
         <div>
-          <label for="end">종료 시간</label>
-          <select id="end"></select>
+          <label>종료 시간</label>
+          <div class="split-time-row">
+            <select id="endHour" aria-label="종료 시"></select>
+            <select id="endMinute" aria-label="종료 분"></select>
+          </div>
         </div>
       </div>
 
@@ -181,6 +187,6 @@
     </section>
   </div>
 
-  <script src="app.js?v=final-calendar-category"></script>
+  <script src="app.js?v=time-v1"></script>
 </body>
 </html>

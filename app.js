@@ -65,6 +65,10 @@ const els = {
   timeFields: document.getElementById("timeFields"),
   start: document.getElementById("start"),
   end: document.getElementById("end"),
+  startHour: document.getElementById("startHour"),
+  startMinute: document.getElementById("startMinute"),
+  endHour: document.getElementById("endHour"),
+  endMinute: document.getElementById("endMinute"),
   repeat: document.getElementById("repeat"),
   eventButtonRow: document.getElementById("eventButtonRow"),
   saveEventBtn: document.getElementById("saveEventBtn"),
@@ -211,17 +215,43 @@ function getRepeatLabel(value) {
 }
 
 function createTimeOptions() {
-  els.start.innerHTML = "";
-  els.end.innerHTML = "";
+  const hourSelects = [els.startHour, els.endHour].filter(Boolean);
+  const minuteSelects = [els.startMinute, els.endMinute].filter(Boolean);
 
-  for (let minutes = startHour * 60; minutes <= endHour * 60; minutes += slotMinutes) {
-    const label = minutesToTime(minutes);
-    els.start.add(new Option(label, String(minutes)));
-    els.end.add(new Option(label, String(minutes)));
-  }
+  hourSelects.forEach(select => {
+    select.innerHTML = "";
+    for (let hour = startHour; hour <= endHour; hour += 1) {
+      const displayHour = hour % 24;
+      select.add(new Option(`${pad(displayHour)}시`, String(hour)));
+    }
+  });
 
-  els.start.value = String(9 * 60);
-  els.end.value = String(10 * 60);
+  minuteSelects.forEach(select => {
+    select.innerHTML = "";
+    for (let minute = 0; minute < 60; minute += 10) {
+      select.add(new Option(`${pad(minute)}분`, String(minute)));
+    }
+  });
+
+  setTimeFields("start", 9 * 60);
+  setTimeFields("end", 10 * 60);
+}
+
+function setTimeFields(prefix, minutes) {
+  const hour = Math.floor(minutes / 60);
+  const minute = minutes % 60;
+  const hourSelect = prefix === "start" ? els.startHour : els.endHour;
+  const minuteSelect = prefix === "start" ? els.startMinute : els.endMinute;
+
+  if (hourSelect) hourSelect.value = String(hour);
+  if (minuteSelect) minuteSelect.value = String(minute);
+}
+
+function getTimeFields(prefix) {
+  const hourSelect = prefix === "start" ? els.startHour : els.endHour;
+  const minuteSelect = prefix === "start" ? els.startMinute : els.endMinute;
+
+  return Number(hourSelect.value) * 60 + Number(minuteSelect.value);
 }
 
 function shouldShowEventOnDate(event, dateString) {
@@ -362,8 +392,10 @@ function renderDayView() {
 
   events.forEach(event => {
     const category = getCategory(event.categoryId);
-    const startOffset = ((event.start - startHour * 60) / slotMinutes) * 38;
-    const duration = ((event.end - event.start) / slotMinutes) * 38;
+    const slotHeight = 38;
+    const minutesPerPixel = slotHeight / slotMinutes;
+    const startOffset = (event.start - startHour * 60) * minutesPerPixel;
+    const duration = (event.end - event.start) * minutesPerPixel;
     const block = document.createElement("div");
 
     block.className = "timeline-event-block";
@@ -519,7 +551,7 @@ function updateCurrentTimeMarker() {
 
   const now = new Date();
   const minutes = getNowMinutesForDayPlan();
-  const offset = ((minutes - startHour * 60) / slotMinutes) * 38;
+  const offset = (minutes - startHour * 60) * (38 / slotMinutes);
   const coveredSlot = Math.floor(minutes / slotMinutes) * slotMinutes;
   const coveredCell = document.querySelector(`.time-cell[data-time="${coveredSlot}"]`);
 
@@ -536,7 +568,7 @@ function scrollToCurrentTimeOnOpen() {
   if (!isNowVisibleInTimetable()) return;
 
   const minutes = getNowMinutesForDayPlan();
-  const offset = ((minutes - startHour * 60) / slotMinutes) * 38;
+  const offset = (minutes - startHour * 60) * (38 / slotMinutes);
   const target = Math.max(0, offset - 90);
 
   requestAnimationFrame(() => {
@@ -678,6 +710,23 @@ async function copyCalendarUrl() {
   }
 }
 
+function getCountScopeDates() {
+  if (viewMode === "week") return getWeekDates(selectedDate);
+
+  if (viewMode === "month") {
+    const base = parseDate(selectedDate);
+    const year = base.getFullYear();
+    const month = base.getMonth();
+    const lastDay = new Date(year, month + 1, 0).getDate();
+
+    return Array.from({ length: lastDay }, (_, index) => {
+      return formatDate(new Date(year, month, index + 1));
+    });
+  }
+
+  return [selectedDate];
+}
+
 function renderSchedule() {
   updateDateLabel();
   updateTodayButton();
@@ -695,8 +744,9 @@ function renderSchedule() {
 
   renderSummary();
 
-  const total = getEventsForDate(selectedDate).length;
-  const visible = getVisibleEventsForDate(selectedDate).length;
+  const countScopeDates = getCountScopeDates();
+  const total = countScopeDates.reduce((sum, date) => sum + getEventsForDate(date).length, 0);
+  const visible = countScopeDates.reduce((sum, date) => sum + getVisibleEventsForDate(date).length, 0);
   els.eventCount.textContent = els.typeFilter.value === "all" ? `${total}개 일정` : `${visible}/${total}개 일정`;
 
   els.dayViewBtn.classList.toggle("active", viewMode === "day");
@@ -823,8 +873,8 @@ function resetForm() {
   els.title.value = "";
   els.memo.value = "";
   els.categorySelect.value = appData.categories[0]?.id || "";
-  els.start.value = String(9 * 60);
-  els.end.value = String(10 * 60);
+  setTimeFields("start", 9 * 60);
+  setTimeFields("end", 10 * 60);
   if (els.isUnscheduled) els.isUnscheduled.checked = false;
   if (els.timeFields) els.timeFields.classList.remove("is-hidden");
   els.repeat.value = "none";
@@ -849,8 +899,8 @@ function startEditEvent(id) {
   if (els.isUnscheduled) els.isUnscheduled.checked = Boolean(event.isUnscheduled);
   if (els.timeFields) els.timeFields.classList.toggle("is-hidden", Boolean(event.isUnscheduled));
   if (!event.isUnscheduled) {
-    els.start.value = String(event.start);
-    els.end.value = String(event.end);
+    setTimeFields("start", event.start);
+    setTimeFields("end", event.end);
   }
   els.repeat.value = event.repeat || "none";
   els.saveEventBtn.textContent = "수정 저장하기";
@@ -867,8 +917,8 @@ function saveEvent() {
   const categoryId = els.categorySelect.value;
   const memo = els.memo.value.trim();
   const isUnscheduled = Boolean(els.isUnscheduled?.checked);
-  const start = isUnscheduled ? null : Number(els.start.value);
-  const end = isUnscheduled ? null : Number(els.end.value);
+  const start = isUnscheduled ? null : getTimeFields("start");
+  const end = isUnscheduled ? null : getTimeFields("end");
   const repeat = els.repeat.value;
 
   if (!title) {

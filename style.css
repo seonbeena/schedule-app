@@ -1835,3 +1835,23 @@ select {
   border-radius: 7px;
   font-size: 10px;
 }
+
+
+/* time v1: split hour/minute selects, 10-minute input while keeping 30-minute ruler */
+.split-time-fields {
+  gap: 7px;
+}
+
+.split-time-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 5px;
+}
+
+.split-time-row select {
+  min-width: 0;
+  text-align: center;
+  text-align-last: center;
+  padding-left: 4px !important;
+  padding-right: 18px !important;
+}
