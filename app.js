@@ -708,7 +708,11 @@ function decodeBackupPayload(code) {
 }
 
 function createBackupPayload() {
-  normalizeCategoryVisibilityFlags();
+  if (typeof normalizeCategoryVisibilityFlags === "function") {
+    normalizeCategoryVisibilityFlags();
+  } else if (typeof normalizeCategorySyncFlags === "function") {
+    normalizeCategorySyncFlags();
+  }
 
   return {
     version: 1,

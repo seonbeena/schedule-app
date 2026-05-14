@@ -1894,10 +1894,10 @@ select {
 }
 
 
-/* backup v1: link/backup code controls */
+/* backup clean v1: clean backup controls, matched to calendar sync spacing */
 .backup-content {
   display: grid;
-  gap: 7px;
+  gap: 6px;
 }
 
 .backup-code-btn {
@@ -1914,60 +1914,4 @@ select {
 .backup-code-btn.secondary {
   background: #273449;
   border: 1px solid #475569;
-}
-
-.backup-warning {
-  margin: 0;
-  color: #94a3b8;
-  font-size: 10px;
-  line-height: 1.35;
-  text-align: center;
-}
-
-
-/* backup v2: cleaner backup controls and stronger spacing */
-.backup-content {
-  gap: 10px !important;
-}
-
-.backup-warning {
-  display: none !important;
-}
-
-.backup-code-btn + .backup-code-btn {
-  margin-top: 0;
-}
-
-
-/* backup v4: moderate spacing, no custom backup modal */
-.backup-content {
-  display: grid;
-  gap: 6px !important;
-}
-
-.backup-warning {
-  display: none !important;
-}
-
-
-/* backup v5: fix backup code generation and moderate button spacing */
-.backup-content {
-  display: grid;
-  gap: 7px !important;
-}
-
-.backup-code-btn + .backup-code-btn {
-  margin-top: 0 !important;
-}
-
-
-/* backup v6: match backup button spacing to calendar sync buttons */
-.backup-content {
-  display: grid;
-  gap: 6px !important;
-}
-
-#copyBackupCodeBtn,
-#importBackupCodeBtn {
-  margin: 0 !important;
 }
