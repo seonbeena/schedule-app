@@ -1939,43 +1939,12 @@ select {
 }
 
 
-/* backup v3: explicit button spacing + manual copy sheet */
+/* backup v4: moderate spacing, no custom backup modal */
 .backup-content {
-  gap: 0 !important;
+  display: grid;
+  gap: 6px !important;
 }
 
-#copyBackupCodeBtn {
-  margin-bottom: 12px !important;
-}
-
-#importBackupCodeBtn {
-  margin-top: 0 !important;
-}
-
-.backup-code-sheet {
-  width: min(360px, calc(100vw - 28px));
-  max-width: calc(100vw - 28px);
-  border-radius: 18px;
-  padding: 12px;
-}
-
-.backup-code-text {
-  width: 100%;
-  height: 170px;
-  resize: none;
-  border: 1px solid #475569;
-  border-radius: 10px;
-  background: #111827;
-  color: #e2e8f0;
-  font-size: 12px;
-  line-height: 1.35;
-  padding: 8px;
-  word-break: break-all;
-  overflow: auto;
-  -webkit-user-select: text;
-  user-select: text;
-}
-
-#selectBackupCodeBtn {
-  margin-top: 8px;
+.backup-warning {
+  display: none !important;
 }
