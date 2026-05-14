@@ -1250,21 +1250,21 @@ if (els.importBackupCodeBtn) {
 
 els.sectionToggles.forEach(button => {
   button.addEventListener("click", () => {
-    const section = button.closest(".tool-section, .settings-section");
+    const section = button.closest(".settings-section, .tool-section");
     if (!section) return;
 
-    const icon = button.querySelector(".toggle-icon");
-    const isCurrentlyOpen = section.classList.contains("open");
-
     const scope = section.closest("#settingsModal") || document;
-    scope.querySelectorAll(".tool-section.open, .settings-section.open").forEach(item => {
-      item.classList.remove("open");
-      const itemIcon = item.querySelector(".toggle-icon");
-      if (itemIcon) itemIcon.textContent = "+";
+    const isOpen = section.classList.contains("open");
+
+    scope.querySelectorAll(".settings-section.open, .tool-section.open").forEach(openSection => {
+      openSection.classList.remove("open");
+      const openIcon = openSection.querySelector(".toggle-icon");
+      if (openIcon) openIcon.textContent = "+";
     });
 
-    if (!isCurrentlyOpen) {
+    if (!isOpen) {
       section.classList.add("open");
+      const icon = section.querySelector(".toggle-icon");
       if (icon) icon.textContent = "−";
     }
   });

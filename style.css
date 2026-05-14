@@ -1932,3 +1932,17 @@ select {
 #importBackupCodeBtn {
   margin-top: 8px !important;
 }
+
+
+/* backup clean v3: robust settings accordion visibility */
+.settings-section .section-content {
+  display: none;
+}
+
+.settings-section.open .section-content {
+  display: block;
+}
+
+.settings-section.open .backup-content {
+  display: block !important;
+}
