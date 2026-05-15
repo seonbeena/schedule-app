@@ -1,11 +1,11 @@
-const CACHE_NAME = "dayplan-filter-label-v1";
+const CACHE_NAME = "dayplan-design-step1-v1";
 const ASSETS = [
-  "./index.html?v=filter-label-v1",
-  "./style.css?v=filter-label-v1",
-  "./app.js?v=filter-label-v1",
-  "./manifest.json?v=filter-label-v1",
-  "./icon-192.png?v=filter-label-v1",
-  "./icon-512.png?v=filter-label-v1"
+  "./index.html?v=design-step1-v1",
+  "./style.css?v=design-step1-v1",
+  "./app.js?v=design-step1-v1",
+  "./manifest.json?v=design-step1-v1",
+  "./icon-192.png?v=design-step1-v1",
+  "./icon-512.png?v=design-step1-v1"
 ];
 
 self.addEventListener("install", event => {

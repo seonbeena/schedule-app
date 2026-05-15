@@ -2019,3 +2019,64 @@ label[for="typeFilter"] {
   font-weight: 700 !important;
   letter-spacing: -0.02em;
 }
+
+
+/* design step1 v1: quieter header, calmer tabs, lower-emphasis summary card */
+header {
+  padding: 13px 14px 9px;
+}
+
+h1 {
+  margin: 0 0 2px;
+  font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: -0.045em;
+}
+
+header p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 11px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.segmented-control {
+  padding: 3px;
+  border-radius: 999px;
+  background: #111827;
+  border: 1px solid #334155;
+}
+
+.segmented-control button {
+  min-height: 28px;
+  padding: 4px 6px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #94a3b8;
+}
+
+.segmented-control button.active {
+  background: #273449;
+  color: #f8fafc;
+}
+
+.summary-card {
+  margin-top: 7px;
+  background: #0f172a;
+  border-color: #2c3749;
+  box-shadow: none;
+}
+
+.summary-toggle {
+  padding: 7px 10px;
+}
+
+.summary-title {
+  font-size: 12px;
+}
+
+.summary-preview,
+.summary-detail {
+  color: #94a3b8;
+}
