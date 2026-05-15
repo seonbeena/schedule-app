@@ -503,7 +503,7 @@ function renderSummary() {
   const unscheduled = events.filter(event => event.isUnscheduled);
   const timed = events.filter(event => !event.isUnscheduled);
 
-  els.summaryCount.textContent = `${unscheduled.length}개`;
+  els.summaryCount.textContent = `${events.length}개`;
 
   if (unscheduled.length === 0) {
     els.summaryPreview.innerHTML = `<span class="summary-preview-line">시간 미정 일정 없음</span>`;

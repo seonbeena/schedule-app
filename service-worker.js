@@ -1,11 +1,11 @@
-const CACHE_NAME = "dayplan-final-with-backup";
+const CACHE_NAME = "dayplan-todo-count-v1";
 const ASSETS = [
-  "./index.html?v=final-with-backup",
-  "./style.css?v=final-with-backup",
-  "./app.js?v=final-with-backup",
-  "./manifest.json?v=final-with-backup",
-  "./icon-192.png?v=final-with-backup",
-  "./icon-512.png?v=final-with-backup"
+  "./index.html?v=todo-count-v1",
+  "./style.css?v=todo-count-v1",
+  "./app.js?v=todo-count-v1",
+  "./manifest.json?v=todo-count-v1",
+  "./icon-192.png?v=todo-count-v1",
+  "./icon-512.png?v=todo-count-v1"
 ];
 
 self.addEventListener("install", event => {
