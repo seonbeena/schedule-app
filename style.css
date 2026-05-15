@@ -1966,3 +1966,30 @@ select {
 .settings-section.open > .section-content.backup-content #importBackupCodeBtn {
   margin-top: 8px !important;
 }
+
+
+/* month header v1: make month view header controls lighter */
+body[data-view-mode="month"] #typeFilter {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+
+body[data-view-mode="month"] #eventCount {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em;
+}
+
+
+/* header small v1: smaller filter and event count in all views */
+#typeFilter {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em;
+}
+
+#eventCount {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em;
+}

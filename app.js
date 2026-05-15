@@ -880,6 +880,7 @@ function getCountScopeDates() {
 }
 
 function renderSchedule() {
+  document.body.dataset.viewMode = viewMode;
   updateDateLabel();
   updateTodayButton();
 
