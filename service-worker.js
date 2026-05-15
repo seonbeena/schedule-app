@@ -1,11 +1,11 @@
-const CACHE_NAME = "dayplan-design-step2-v1";
+const CACHE_NAME = "dayplan-final-design-release";
 const ASSETS = [
-  "./index.html?v=design-step2-v1",
-  "./style.css?v=design-step2-v1",
-  "./app.js?v=design-step2-v1",
-  "./manifest.json?v=design-step2-v1",
-  "./icon-192.png?v=design-step2-v1",
-  "./icon-512.png?v=design-step2-v1"
+  "./index.html?v=final-design-release",
+  "./style.css?v=final-design-release",
+  "./app.js?v=final-design-release",
+  "./manifest.json?v=final-design-release",
+  "./icon-192.png?v=final-design-release",
+  "./icon-512.png?v=final-design-release"
 ];
 
 self.addEventListener("install", event => {
