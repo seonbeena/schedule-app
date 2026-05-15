@@ -1993,3 +1993,29 @@ body[data-view-mode="month"] #eventCount {
   font-weight: 700 !important;
   letter-spacing: -0.02em;
 }
+
+
+/* filter label v1: shrink the "필터" label, not the select value */
+#typeFilter {
+  font-size: 12px !important;
+  font-weight: 800 !important;
+}
+
+#eventCount {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em;
+}
+
+/* The filter label is the small text next to the select in the header bar */
+.toolbar label,
+.filter-row label,
+.control-row label,
+.view-tools label,
+.schedule-tools label,
+.top-controls label,
+label[for="typeFilter"] {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em;
+}
