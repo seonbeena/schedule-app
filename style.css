@@ -2080,3 +2080,112 @@ header p {
 .summary-detail {
   color: #94a3b8;
 }
+
+
+/* design step2 v1: polish date row, week cards, month density, unify month filter select */
+.date-nav-wrap {
+  gap: 5px;
+}
+
+.date-nav {
+  min-height: 30px;
+  gap: 6px;
+}
+
+.date-arrow,
+.date-display {
+  height: 30px;
+  border-radius: 10px;
+  background: #111827;
+  border-color: #334155;
+  box-shadow: none;
+}
+
+.date-arrow {
+  width: 34px;
+  font-size: 19px;
+  color: #cbd5e1;
+}
+
+#datePickerLabel {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.today-mini {
+  min-height: 18px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  background: #1e293b;
+  color: #cfe3ff;
+}
+
+.week-list {
+  padding: 8px;
+  gap: 7px;
+}
+
+.week-day-card {
+  padding: 7px 8px;
+  border-radius: 11px;
+  background: #101827;
+  border-color: #2c3749;
+  box-shadow: none;
+}
+
+.week-day-title {
+  margin-bottom: 5px;
+  font-size: 12px;
+  letter-spacing: -0.02em;
+}
+
+.week-event {
+  gap: 6px;
+  margin-top: 3px;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.week-event-dot {
+  width: 6px;
+  height: 6px;
+}
+
+.month-grid {
+  padding: 8px;
+}
+
+.month-day-name {
+  padding: 6px 2px;
+  font-size: 10px;
+  letter-spacing: -0.01em;
+}
+
+.month-cell {
+  min-height: 48px;
+  padding: 3px 3px;
+}
+
+.month-date {
+  margin-bottom: 3px;
+  font-size: 10.5px;
+}
+
+.month-dots {
+  gap: 2px;
+}
+
+.month-dot {
+  width: 6px;
+  height: 6px;
+}
+
+/* Month view had an older month-only override in previous versions.
+   Force the select font back to the same size as day/week. */
+body[data-view-mode="month"] #typeFilter,
+#typeFilter {
+  font-size: 12px !important;
+  font-weight: 800 !important;
+}
