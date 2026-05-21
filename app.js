@@ -442,7 +442,7 @@ function renderWeekView() {
   const week = getWeekDates(selectedDate);
   els.schedule.className = "schedule-scroll week-list";
   els.schedule.innerHTML = week.map(date => {
-    const events = getVisibleEventsForDate(date).filter(shouldShowEventInMonth);
+    const events = getVisibleEventsForDate(date);
     const list = events.length
       ? events.map(event => {
           const category = getCategory(event.categoryId);
